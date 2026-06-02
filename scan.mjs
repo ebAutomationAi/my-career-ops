@@ -173,6 +173,68 @@ export function buildLocationFilter(locationFilter) {
   };
 }
 
+const SEARCH_ENGINE_BASE = 'https://html.duckduckgo.com/html';
+
+function buildSearchUrl(query) {
+  return `${SEARCH_ENGINE_BASE}?q=${encodeURIComponent(query)}`;
+}
+
+function decodeHtmlEntities(value) {
+  return String(value)
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&ldquo;/g, '“')
+    .replace(/&rdquo;/g, '”')
+    .replace(/&lsquo;/g, '‘')
+    .replace(/&rsquo;/g, '’');
+}
+
+function stripHtmlTags(value) {
+  return String(value).replace(/<[^>]*>/g, ' ');
+}
+
+function parseDuckDuckGoSearchResults(html) {
+  if (typeof html !== 'string') return [];
+  const results = [];
+  const anchorRegex = /<a[^>]+class="[^"]*result__a[^"]*"[^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/gi;
+  for (const match of html.matchAll(anchorRegex)) {
+    const href = match[1];
+    const titleHtml = match[2];
+    let url;
+    try {
+      const parsed = new URL(href, SEARCH_ENGINE_BASE);
+      if (parsed.pathname === '/l/' && parsed.searchParams.has('uddg')) {
+        url = parsed.searchParams.get('uddg') || parsed.href;
+      } else {
+        url = parsed.href;
+      }
+    } catch {
+      continue;
+    }
+    if (!url.startsWith('http')) continue;
+    const title = decodeHtmlEntities(stripHtmlTags(titleHtml)).trim();
+    if (!title) continue;
+    results.push({ title, url });
+  }
+  return results;
+}
+
+async function fetchSearchQuery(query, ctx) {
+  const queryUrl = buildSearchUrl(query);
+  const html = await ctx.fetchText(queryUrl, { redirect: 'follow' });
+  return parseDuckDuckGoSearchResults(html);
+}
+
+function enabledSearchQueries(config) {
+  return Array.isArray(config.search_queries)
+    ? config.search_queries.filter(q => q && q.enabled !== false && typeof q.query === 'string' && q.query.trim())
+    : [];
+}
+
 // ── Dedup ───────────────────────────────────────────────────────────
 
 function loadSeenUrls() {
@@ -396,6 +458,7 @@ async function main() {
 
   const config = parseYaml(readFileSync(PORTALS_PATH, 'utf-8'));
   const companies = config.tracked_companies || [];
+  const searchQueries = enabledSearchQueries(config);
   const titleFilter = buildTitleFilter(config.title_filter);
   const locationFilter = buildLocationFilter(config.location_filter);
 
@@ -428,6 +491,7 @@ async function main() {
   // 5. Fetch from each target
   const date = new Date().toISOString().slice(0, 10);
   let totalFound = 0;
+  let totalSearchResults = 0;
   let totalFilteredTitle = 0;
   let totalFilteredLocation = 0;
   let totalDupes = 0;
@@ -487,7 +551,46 @@ async function main() {
     }
   });
 
-  await parallelFetch(tasks, CONCURRENCY);
+  const searchTasks = searchQueries.map(query => async () => {
+    const ctx = makeHttpCtx();
+    try {
+      const results = await fetchSearchQuery(query.query, ctx);
+      totalSearchResults += results.length;
+      for (const result of results) {
+        if (!titleFilter(result.title)) {
+          totalFilteredTitle++;
+          continue;
+        }
+        if (!locationFilter(result.location)) {
+          totalFilteredLocation++;
+          continue;
+        }
+        if (seenUrls.has(result.url)) {
+          totalDupes++;
+          continue;
+        }
+        const company = result.company || new URL(result.url).hostname;
+        const key = `${company.toLowerCase()}::${result.title.toLowerCase()}`;
+        if (seenCompanyRoles.has(key)) {
+          totalDupes++;
+          continue;
+        }
+        seenUrls.add(result.url);
+        seenCompanyRoles.add(key);
+        newOffers.push({
+          title: result.title,
+          url: result.url,
+          company,
+          location: result.location || '',
+          source: `search:${query.name || query.query}`,
+        });
+      }
+    } catch (err) {
+      errors.push({ company: query.name || query.query, error: err.message });
+    }
+  });
+
+  await parallelFetch([...tasks, ...searchTasks], CONCURRENCY);
 
   // 5.5. Optional liveness verification — drop expired and guard-rejected postings
   let verifiedOffers = newOffers;
@@ -538,6 +641,10 @@ async function main() {
   console.log(`${'━'.repeat(45)}`);
   console.log(`Companies scanned:     ${targets.length}`);
   console.log(`Total jobs found:      ${totalFound}`);
+  if (searchQueries.length > 0) {
+    console.log(`Search queries run:    ${searchQueries.length}`);
+    console.log(`Search results found:  ${totalSearchResults}`);
+  }
   console.log(`Filtered by title:     ${totalFilteredTitle} removed`);
   console.log(`Filtered by location:  ${totalFilteredLocation} removed`);
   console.log(`Duplicates:            ${totalDupes} skipped`);
