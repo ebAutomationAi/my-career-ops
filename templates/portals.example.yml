@@ -408,6 +408,21 @@ search_queries:
 
 tracked_companies:
 
+  # -- Local parser example --
+  # Use this pattern for SSR/static career portals that don't expose a
+  # Greenhouse/Ashby/Lever/Workable API. The script receives {careers_url}
+  # expanded at runtime and must print a JSON array to stdout:
+  #   [{ "title": "...", "url": "...", "company": "...", "location": "..." }]
+  # Logs go to stderr. Pagination, dedup, and rate-limiting are the script's job.
+  #
+  # - name: Example SSR Portal
+  #   careers_url: "https://careers.example.com/search/"
+  #   parser:
+  #     command: node
+  #     script: parsers/example-portal.mjs
+  #     args: ["{careers_url}"]
+  #   enabled: true
+
   # -- AI Labs & LLM providers --
 
   - name: Anthropic
