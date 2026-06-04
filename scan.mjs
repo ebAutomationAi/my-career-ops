@@ -48,6 +48,8 @@ const PROVIDERS_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)),
 mkdirSync('data', { recursive: true });
 
 const CONCURRENCY = 10;
+const SEARCH_DELAY_MS = 2500;
+const SEARCH_RETRY_DELAY_MS = 5000;
 
 // ── Provider loading ────────────────────────────────────────────────
 
@@ -174,10 +176,17 @@ export function buildLocationFilter(locationFilter) {
 }
 
 const SEARCH_ENGINE_BASE = 'https://html.duckduckgo.com/html';
+const DDG_POST_URL = 'https://html.duckduckgo.com/html/';
 
-function buildSearchUrl(query) {
-  return `${SEARCH_ENGINE_BASE}?q=${encodeURIComponent(query)}`;
-}
+const DDG_SEARCH_HEADERS = {
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  'accept-language': 'en-US,en;q=0.9',
+  'content-type': 'application/x-www-form-urlencoded',
+  'origin': 'https://html.duckduckgo.com',
+  'referer': 'https://html.duckduckgo.com/',
+  'cache-control': 'no-cache',
+};
 
 function decodeHtmlEntities(value) {
   return String(value)
@@ -200,6 +209,7 @@ function stripHtmlTags(value) {
 function parseDuckDuckGoSearchResults(html) {
   if (typeof html !== 'string') return [];
   const results = [];
+  const seen = new Set();
   const anchorRegex = /<a[^>]+class="[^"]*result__a[^"]*"[^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/gi;
   for (const match of html.matchAll(anchorRegex)) {
     const href = match[1];
@@ -215,18 +225,54 @@ function parseDuckDuckGoSearchResults(html) {
     } catch {
       continue;
     }
-    if (!url.startsWith('http')) continue;
+    if (!url.startsWith('http') || seen.has(url)) continue;
     const title = decodeHtmlEntities(stripHtmlTags(titleHtml)).trim();
     if (!title) continue;
+    seen.add(url);
+    results.push({ title, url });
+  }
+  // Fallback: protocol-relative DDG redirect links (handles DDG class renames)
+  const uddgRegex = /<a[^>]+href="(\/\/duckduckgo\.com\/l\/\?uddg=[^"]+)"[^>]*>(.*?)<\/a>/gi;
+  for (const match of html.matchAll(uddgRegex)) {
+    let url;
+    try {
+      const parsed = new URL('https:' + match[1]);
+      url = parsed.searchParams.get('uddg') || '';
+    } catch {
+      continue;
+    }
+    if (!url.startsWith('http') || seen.has(url)) continue;
+    const title = decodeHtmlEntities(stripHtmlTags(match[2])).trim();
+    if (!title) continue;
+    seen.add(url);
     results.push({ title, url });
   }
   return results;
 }
 
+async function fetchSearchQueryWithRetry(query, ctx) {
+  try {
+    return await fetchSearchQuery(query, ctx);
+  } catch (err) {
+    if (!err.message.startsWith('search blocked')) throw err;
+    await new Promise(r => setTimeout(r, SEARCH_RETRY_DELAY_MS));
+    return await fetchSearchQuery(query, ctx);
+  }
+}
+
 async function fetchSearchQuery(query, ctx) {
-  const queryUrl = buildSearchUrl(query);
-  const html = await ctx.fetchText(queryUrl, { redirect: 'follow' });
-  return parseDuckDuckGoSearchResults(html);
+  const body = new URLSearchParams({ q: query, b: '', kl: '' }).toString();
+  const html = await ctx.fetchText(DDG_POST_URL, {
+    method: 'POST',
+    headers: DDG_SEARCH_HEADERS,
+    body,
+    redirect: 'follow',
+  });
+  const results = parseDuckDuckGoSearchResults(html);
+  if (results.length === 0 && !html.includes('result__a')) {
+    throw new Error(`search blocked or empty page, ${html.length} bytes`);
+  }
+  return results;
 }
 
 function enabledSearchQueries(config) {
@@ -551,10 +597,14 @@ async function main() {
     }
   });
 
-  const searchTasks = searchQueries.map(query => async () => {
+  await parallelFetch(tasks, CONCURRENCY);
+
+  for (let i = 0; i < searchQueries.length; i++) {
+    const query = searchQueries[i];
+    if (i > 0) await new Promise(r => setTimeout(r, SEARCH_DELAY_MS));
     const ctx = makeHttpCtx();
     try {
-      const results = await fetchSearchQuery(query.query, ctx);
+      const results = await fetchSearchQueryWithRetry(query.query, ctx);
       totalSearchResults += results.length;
       for (const result of results) {
         if (!titleFilter(result.title)) {
@@ -588,9 +638,7 @@ async function main() {
     } catch (err) {
       errors.push({ company: query.name || query.query, error: err.message });
     }
-  });
-
-  await parallelFetch([...tasks, ...searchTasks], CONCURRENCY);
+  }
 
   // 5.5. Optional liveness verification — drop expired and guard-rejected postings
   let verifiedOffers = newOffers;
