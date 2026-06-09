@@ -16,7 +16,7 @@ Run `node update-system.mjs check` and parse the JSON output.
 Show the user what will change. Run:
 
 ```bash
-git fetch https://github.com/santifer/career-ops.git main || {
+git fetch https://github.com/ebAutomationAi/my-career-ops.git main || {
   echo "Failed to fetch latest changes. Cannot generate an accurate diff preview."
   exit 1
 }
@@ -35,6 +35,7 @@ Present to the user as a clear summary:
 > **Update available: v{local} → v{remote}**
 >
 > **Changes summary:**
+>
 > - Modes: {N} files changed (list which ones)
 > - Scripts: {N} files changed
 > - Dashboard: {N} files changed
@@ -64,9 +65,11 @@ Before applying, check if the update might affect the user's customizations:
 ## Step 4 — Confirm and Apply
 
 Ask the user for confirmation:
+
 > "Ready to update. Apply changes? (This can be rolled back with `/career-ops update rollback`)"
 
 If yes:
+
 1. Capture the current commit as a run-specific pre-update baseline before apply runs, e.g. `PRE_UPDATE_REF=$(git rev-parse HEAD)`. Don't rely on `backup-pre-update-{local}` alone — `update-system.mjs apply` reuses that branch if it already exists, so it may point at an older snapshot.
 2. Run `node update-system.mjs apply`
    - If the command exits with a non-zero code, treat apply as failed. Show the captured output and offer:
@@ -86,19 +89,21 @@ If yes:
      - **Removed**: no match at all → offer to delete or replace.
    - When a rename or removal is detected, ask before editing:
      - For renames:
-       > "Your _profile.md references archetype '{old_name}' which was renamed to '{new_name}'. Want me to update it?"
+       > "Your \_profile.md references archetype '{old_name}' which was renamed to '{new_name}'. Want me to update it?"
      - For removals:
-       > "Your _profile.md references archetype '{old_name}' which was removed in the new _shared.md. Want me to delete the reference or replace it with another archetype?"
+       > "Your \_profile.md references archetype '{old_name}' which was removed in the new \_shared.md. Want me to delete the reference or replace it with another archetype?"
 5. Show final status:
    > "✅ Updated to v{version}. Run `node doctor.mjs` anytime to verify setup."
 
 If no:
+
 1. Run `node update-system.mjs dismiss`
 2. Tell the user they can run `/career-ops update` anytime to check again.
 
 ## Step 5 — Rollback (if requested)
 
 If the user says "rollback" or runs `/career-ops update rollback`:
+
 1. Run `node update-system.mjs rollback`
 2. Show what was restored.
 

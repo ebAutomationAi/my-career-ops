@@ -9,6 +9,7 @@ Thanks for your interest in contributing! Career-Ops is built with Claude Code, 
 PRs without a corresponding issue may be closed if they don't align with the project's architecture or goals.
 
 ### What makes a good PR
+
 - Fixes a bug listed in Issues
 - Addresses a feature request that was discussed and approved
 - Includes a clear description of what changed and why
@@ -27,13 +28,15 @@ PRs without a corresponding issue may be closed if they don't align with the pro
 ## What to Contribute
 
 **Good first contributions:**
+
 - Add companies to `templates/portals.example.yml`
 - Translate modes to other languages
 - Improve documentation
 - Add example CVs for different roles (in `examples/`)
-- Report bugs via [Issues](https://github.com/santifer/career-ops/issues)
+- Report bugs via [Issues](https://github.com/ebAutomationAi/my-career-ops/issues)
 
 **Bigger contributions:**
+
 - New evaluation dimensions or scoring logic
 - Dashboard TUI features (in `dashboard/`)
 - New skill modes (in `modes/`)
@@ -77,5 +80,5 @@ trademark policy regarding commercial naming and endorsement claims.
 ## Need Help?
 
 - [Join the Discord](https://discord.gg/8pRpHETxa4) — fastest way to get answers and connect with other contributors
-- [Open an issue](https://github.com/santifer/career-ops/issues)
+- [Open an issue](https://github.com/ebAutomationAi/my-career-ops/issues)
 - [Read the architecture docs](docs/ARCHITECTURE.md)

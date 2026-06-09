@@ -11,8 +11,8 @@
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/santifer/career-ops.git
-cd career-ops
+git clone https://github.com/ebAutomationAi/my-career-ops.git
+cd my-career-ops
 npm install
 npx playwright install chromium   # Required for PDF generation
 ```
@@ -38,6 +38,7 @@ cp templates/portals.example.yml portals.yml
 ```
 
 Edit `portals.yml`:
+
 - Update `title_filter.positive` with keywords matching your target roles
 - Add companies you want to track in `tracked_companies`
 - Customize `search_queries` for your preferred job boards
@@ -54,15 +55,15 @@ Then paste a job offer URL or description. Career-ops will automatically evaluat
 
 ## Available Commands
 
-| Action | How |
-|--------|-----|
-| Evaluate an offer | Paste a URL or JD text |
-| Search for offers | `/career-ops scan` |
-| Process pending URLs | `/career-ops pipeline` |
-| Generate a PDF | `/career-ops pdf` |
-| Batch evaluate | `/career-ops batch` |
-| Check tracker status | `/career-ops tracker` |
-| Fill application form | `/career-ops apply` |
+| Action                | How                    |
+| --------------------- | ---------------------- |
+| Evaluate an offer     | Paste a URL or JD text |
+| Search for offers     | `/career-ops scan`     |
+| Process pending URLs  | `/career-ops pipeline` |
+| Generate a PDF        | `/career-ops pdf`      |
+| Batch evaluate        | `/career-ops batch`    |
+| Check tracker status  | `/career-ops tracker`  |
+| Fill application form | `/career-ops apply`    |
 
 ## Verify Setup
 
