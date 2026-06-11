@@ -36,7 +36,7 @@ function buildParserArgs(entry) {
   const parser = entry.parser || {};
   const args = [];
 
-  if (parser.script) args.push(join(__dirname, expandParserArg(parser.script, entry)));
+  if (parser.script) args.push(parser.script);
   if (Array.isArray(parser.args)) args.push(...parser.args);
 
   return args.map(arg => expandParserArg(arg, entry));
@@ -113,7 +113,7 @@ export default {
     if (!entry.parser?.command) return null;
 
     const scriptPath = getParserScriptPath(entry);
-    if (scriptPath && !existsSync(join(__dirname, scriptPath))) return null;
+    if (scriptPath && !existsSync(scriptPath)) return null;
 
     return { url: entry.careers_url || 'local-parser' };
   },
