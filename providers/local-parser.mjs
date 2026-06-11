@@ -4,7 +4,10 @@
 import { execFile } from 'child_process';
 import { existsSync } from 'fs';
 import { promisify } from 'util';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const execFileAsync = promisify(execFile);
 
 const LOCAL_PARSER_TIMEOUT_MS = 20_000;
@@ -23,7 +26,7 @@ function getParserScriptPath(entry) {
   const args = Array.isArray(parser.args) ? parser.args : [];
   const scriptArg = args.find(arg => {
     const value = String(arg);
-    return !value.startsWith('-') && /\.(py|mjs|js|sh)$/.test(value);
+    return !value.startsWith('-') && /\.(py|mjs|js|sh|script)$/.test(value);
   });
 
   return scriptArg ? expandParserArg(scriptArg, entry) : null;
@@ -33,7 +36,7 @@ function buildParserArgs(entry) {
   const parser = entry.parser || {};
   const args = [];
 
-  if (parser.script) args.push(parser.script);
+  if (parser.script) args.push(join(__dirname, expandParserArg(parser.script, entry)));
   if (Array.isArray(parser.args)) args.push(...parser.args);
 
   return args.map(arg => expandParserArg(arg, entry));
@@ -110,7 +113,7 @@ export default {
     if (!entry.parser?.command) return null;
 
     const scriptPath = getParserScriptPath(entry);
-    if (scriptPath && !existsSync(scriptPath)) return null;
+    if (scriptPath && !existsSync(join(__dirname, scriptPath))) return null;
 
     return { url: entry.careers_url || 'local-parser' };
   },
