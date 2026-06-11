@@ -1,0 +1,20 @@
+{
+  "model": "opusplan",
+  "permissions": {
+    "allow": [],
+    "deny": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/token-guard.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

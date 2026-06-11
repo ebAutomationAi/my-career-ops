@@ -92,6 +92,49 @@ Notes:
 - [Personalization suggestions the candidate should review]
 ```
 
+## Step 5.5 — Save application package to output/pendientes/ (ALWAYS)
+
+Immediately after generating all responses, save both files to `output/pendientes/`:
+
+1. **Carta:** `output/pendientes/apply-{num}-{slug}-{YYYY-MM-DD}.md`
+2. **CV PDF:** `output/pendientes/cv-{candidato}-{slug}-{YYYY-MM-DD}.pdf`
+   — move from `output/` with Bash if not already there
+
+**Filename pattern:**
+- `{num}` = 3-digit zero-padded report number (e.g. `014`)
+- `{slug}` = company slug matching the report filename (e.g. `hampton-hilton-fira`)
+- `{YYYY-MM-DD}` = today's date
+
+**File content:**
+
+```markdown
+# Candidatura #{num} — {Empresa} — {Rol}
+**Fecha:** {YYYY-MM-DD}
+**URL oferta:** {url}
+**PDF CV:** output/pendientes/{nombre-pdf}.pdf
+
+## Carta de presentación
+{carta completa lista para pegar}
+
+## Respuestas al formulario
+### {Campo 1}
+{respuesta}
+
+### {Campo 2}
+{respuesta}
+...
+```
+
+Write the carta with the Write tool and move the CV PDF with Bash if needed — **before** presenting form instructions. Confirm both filenames to the user.
+
+**On confirmed send (Step 6 post-apply):** Run:
+```bash
+mkdir -p "output/enviados/{num}-{slug}"
+mv "output/pendientes/apply-{num}-{slug}-*.md" "output/enviados/{num}-{slug}/"
+mv "output/pendientes/cv-*-{slug}-*.pdf" "output/enviados/{num}-{slug}/"
+```
+Then update `applications.md` status to `Applied`.
+
 ## Step 6 — Post-apply (optional)
 
 If the candidate confirms that they submitted the application:

@@ -3,6 +3,7 @@ cv.md
 data/applications.md
 data/pipeline.md
 data/scan-history.tsv
+data/follow-ups.md
 data/parser-output/**/*.json
 !data/parser-output/.gitkeep
 !data/parser-output/**/.gitkeep
@@ -47,4 +48,10 @@ bun.lock
 .claude/settings.local.json
 .claude/memory/
 career-dashboard
-package-lock.json
+
+# Debug / temp (parser development artifacts)
+data/dumps/
+data/*.backup
+data/*-stderr.txt
+data/*-check.json
+data/*-stdout.txt
