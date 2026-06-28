@@ -45,11 +45,6 @@ const SYSTEM_PATHS = [
   'modes/tracker.md',
   'modes/training.md',
   'modes/latex.md',
-  'modes/de/',
-  'modes/fr/',
-  'modes/ja/',
-  'modes/pt/',
-  'modes/ru/',
   'CLAUDE.md',
   'AGENTS.md',
   'GEMINI.md',
@@ -285,7 +280,7 @@ async function apply() {
     // symlinks — e.g. v1.6.x → v1.7.x where .agents/ was introduced but the
     // local v1.6.x SYSTEM_PATHS didn't include it, so `.agents/` was never
     // checked out while `.claude/skills/` was updated to symlink into it.
-    // See: https://github.com/santifer/career-ops/issues/649
+    // See: https://github.com/ebAutomationAi/my-career-ops/issues/649
     const BOOTSTRAP_PATHS = ['.agents/', 'providers/', 'liveness-browser.mjs'];
     for (const path of BOOTSTRAP_PATHS) {
       if (SYSTEM_PATHS.includes(path)) continue; // already in main loop

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career-Ops Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Career-Ops Dashboard</h1>
+  <div class="ctl">
+    <label for="psel">Profile</label>
+    <select id="psel">
+      <option value="recepcionista">recepcionista</option>
+      <option value="formacion">formacion</option>
+    </select>
+    <button id="rbtn">↻ Refresh data</button>
+  </div>
+</header>
+
+<div id="sbar"></div>
+
+<main>
+  <section>
+    <h2>1 · Conversion Funnel by Status</h2>
+    <div id="c1"></div>
+  </section>
+
+  <section>
+    <h2>2 · Response Rate by Channel</h2>
+    <div id="c2"></div>
+  </section>
+
+  <section>
+    <h2>3 · Unanswered Applications — Age</h2>
+    <div id="c3"></div>
+  </section>
+
+  <section>
+    <h2>4 · Avg Score by Channel / Source</h2>
+    <div id="c4"></div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

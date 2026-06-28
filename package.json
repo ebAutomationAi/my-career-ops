@@ -15,6 +15,7 @@
     "rollback": "node update-system.mjs rollback",
     "liveness": "node check-liveness.mjs",
     "scan": "node scan.mjs",
+    "search": "node auto-search.mjs",
     "patterns": "node analyze-patterns.mjs",
     "gemini:eval": "node gemini-eval.mjs"
   },
@@ -27,8 +28,8 @@
     "careerops",
     "automation"
   ],
-  "author": "Santiago Fernández de Valderrama <hi@santifer.io> (https://santifer.io)",
-  "homepage": "https://santifer.io",
+  "author": "ebAutomationAi <eb.automation.ai@gmail.com> (https://github.com/ebAutomationAi)",
+  "homepage": "https://github.com/ebAutomationAi/my-career-ops",
   "repository": {
     "type": "git",
     "url": "https://github.com/ebAutomationAi/my-career-ops"

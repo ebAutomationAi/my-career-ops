@@ -12,15 +12,43 @@
  *      node analyze-patterns.mjs --self-test
  */
 
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { load as yamlLoad } from 'js-yaml';
 
 const CAREER_OPS = dirname(fileURLToPath(import.meta.url));
-const APPS_FILE = existsSync(join(CAREER_OPS, 'data/applications.md'))
-  ? join(CAREER_OPS, 'data/applications.md')
-  : join(CAREER_OPS, 'applications.md');
+
+// ── Profile resolution ──────────────────────────────────────────────
+const args = process.argv.slice(2);
+const profileFlag = args.indexOf('--profile');
+let profile = profileFlag !== -1 ? args[profileFlag + 1] : process.env.CAREER_OPS_PROFILE;
+
+if (!profile) {
+  const { createInterface } = await import('readline');
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  profile = await new Promise(resolve => {
+    rl.question('¿Qué perfil? (recepcionista / formacion): ', ans => { rl.close(); resolve(ans.trim()); });
+  });
+}
+
+if (!profile) {
+  console.error('Error: perfil no especificado. Usa --profile <nombre> o CAREER_OPS_PROFILE.');
+  process.exit(1);
+}
+
+const profileDir = join(CAREER_OPS, 'profiles', profile);
+if (!existsSync(profileDir)) {
+  const available = existsSync(join(CAREER_OPS, 'profiles'))
+    ? readdirSync(join(CAREER_OPS, 'profiles')).filter(d => !d.startsWith('.')).join(', ')
+    : '(ninguno)';
+  console.error(`Error: perfil "${profile}" no existe en profiles/. Disponibles: ${available}`);
+  process.exit(1);
+}
+
+console.log(`[Perfil activo: ${profile}]`);
+
+const APPS_FILE = join(profileDir, 'data/applications.md');
 const REPORTS_DIR = join(CAREER_OPS, 'reports');
 
 const MACHINE_SUMMARY_FIELDS = new Set([
@@ -44,7 +72,6 @@ const MACHINE_SUMMARY_FIELDS = new Set([
 ]);
 
 // --- CLI args ---
-const args = process.argv.slice(2);
 const summaryMode = args.includes('--summary');
 const minThresholdIdx = args.indexOf('--min-threshold');
 const MIN_THRESHOLD = minThresholdIdx !== -1 && args[minThresholdIdx + 1] !== undefined

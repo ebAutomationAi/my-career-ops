@@ -1,0 +1,32 @@
+# Career-Ops — Canal de Candidatura (Channel Enum)
+# Fuente de verdad para el campo `channel` en applications.md (v2, desde 2026-06-23).
+# Refleja CÓMO se envió la candidatura (el vehículo de envío).
+
+channels:
+  - id: portal-corp
+    label: portal-corp
+    description: ATS propio de la empresa (SuccessFactors, TeamTailor, Workday, Bizneo, Smartrecruiters cuando el subdominio es de la empresa)
+
+  - id: portal-agg
+    label: portal-agg
+    description: Portal agregador externo (InfoJobs, LinkedIn Easy Apply, Indeed, Turijobs, Hosco)
+
+  - id: email-direct
+    label: email-direct
+    description: Email directo a rrhh@, info@, o a una persona concreta
+
+  - id: linkedin-msg
+    label: linkedin-msg
+    description: InMail o mensaje directo a recruiter en LinkedIn (NO Easy Apply)
+
+  - id: referral
+    label: referral
+    description: Contacto interno introdujo al candidato en la empresa
+
+  - id: form-web
+    label: form-web
+    description: Formulario en web corporativa sin ATS detrás
+
+  - id: unknown
+    label: unknown
+    description: No se puede determinar el canal de envío

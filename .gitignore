@@ -55,3 +55,27 @@ data/*.backup
 data/*-stderr.txt
 data/*-check.json
 data/*-stdout.txt
+
+# ── Outputs de sesión / temporales ──────────────────────
+*.png
+*.pdf
+scan-*.log
+scan-output.txt
+fff.html
+project-context.txt
+
+# ── Dumps y parser output ────────────────────────────────
+dumps/
+data/parser-output/*/
+
+# ── Backups ──────────────────────────────────────────────
+backups/
+*.bak
+
+# ── Scripts ad-hoc / one-off ─────────────────────────────
+_apply_nunez_navarro.mjs
+_turijobs_search.mjs
+_extract_novotel.mjs
+dump-minor.mjs
+test-accor-raw.mjs
+bundle-project.py

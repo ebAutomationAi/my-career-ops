@@ -14,23 +14,51 @@
  * Run: node career-ops/verify-pipeline.mjs
  */
 
-import { readFileSync, readdirSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, readdirSync, existsSync, mkdirSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const CAREER_OPS = dirname(fileURLToPath(import.meta.url));
-// Support both layouts: data/applications.md (boilerplate) and applications.md (original)
-const APPS_FILE = existsSync(join(CAREER_OPS, 'data/applications.md'))
-  ? join(CAREER_OPS, 'data/applications.md')
-  : join(CAREER_OPS, 'applications.md');
+
+// ── Profile resolution ──────────────────────────────────────────────
+const args = process.argv.slice(2);
+const profileFlag = args.indexOf('--profile');
+let profile = profileFlag !== -1 ? args[profileFlag + 1] : process.env.CAREER_OPS_PROFILE;
+
+if (!profile) {
+  const { createInterface } = await import('readline');
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  profile = await new Promise(resolve => {
+    rl.question('¿Qué perfil? (recepcionista / formacion): ', ans => { rl.close(); resolve(ans.trim()); });
+  });
+}
+
+if (!profile) {
+  console.error('Error: perfil no especificado. Usa --profile <nombre> o CAREER_OPS_PROFILE.');
+  process.exit(1);
+}
+
+const profileDir = join(CAREER_OPS, 'profiles', profile);
+if (!existsSync(profileDir)) {
+  const available = existsSync(join(CAREER_OPS, 'profiles'))
+    ? readdirSync(join(CAREER_OPS, 'profiles')).filter(d => !d.startsWith('.')).join(', ')
+    : '(ninguno)';
+  console.error(`Error: perfil "${profile}" no existe en profiles/. Disponibles: ${available}`);
+  process.exit(1);
+}
+
+console.log(`[Perfil activo: ${profile}]`);
+
+const APPS_FILE = join(profileDir, 'data/applications.md');
+const TSV_FILE = APPS_FILE.replace(/\.md$/, '.tsv');
 const ADDITIONS_DIR = join(CAREER_OPS, 'batch/tracker-additions');
 const REPORTS_DIR = join(CAREER_OPS, 'reports');
 const STATES_FILE = existsSync(join(CAREER_OPS, 'templates/states.yml'))
   ? join(CAREER_OPS, 'templates/states.yml')
   : join(CAREER_OPS, 'states.yml');
 
-// Ensure required directories exist (fresh setup)
-mkdirSync(join(CAREER_OPS, 'data'), { recursive: true });
+// Ensure required directories exist
+mkdirSync(join(profileDir, 'data'), { recursive: true });
 mkdirSync(REPORTS_DIR, { recursive: true });
 
 const CANONICAL_STATUSES = [
@@ -76,6 +104,9 @@ for (const line of lines) {
     num, date: parts[2], company: parts[3], role: parts[4],
     score: parts[5], status: parts[6], pdf: parts[7], report: parts[8],
     notes: parts[9] || '',
+    channel: parts[10] || '',
+    source: parts[11] || '',
+    colCount: parts.length - 2,
   });
 }
 
@@ -181,6 +212,52 @@ for (const e of entries) {
   }
 }
 if (boldScores === 0) ok('No bold in scores');
+
+// --- Check 8: Column count (schema v2) ---
+const V2_CUTOFF = '2026-06-23';
+let badColCount = 0;
+for (const e of entries) {
+  const isNew = e.date >= V2_CUTOFF;
+  if (isNew && e.colCount !== 14) {
+    error(`#${e.num}: New entry (${e.date}) requires 14 columns, has ${e.colCount}`);
+    badColCount++;
+  } else if (!isNew && e.colCount !== 9 && e.colCount !== 14) {
+    warn(`#${e.num}: Legacy entry (${e.date}) has ${e.colCount} columns (expected 9 or 14)`);
+    badColCount++;
+  }
+}
+if (badColCount === 0) ok('All column counts valid');
+
+// --- Check 9: Vocabulary closed set (channel / source) for v2 entries ---
+const VALID_CHANNELS = new Set(['portal-corp', 'portal-agg', 'email-direct', 'linkedin-msg', 'referral', 'form-web', 'unknown']);
+const VALID_SOURCES = new Set(['scan', 'manual-search', 'linkedin-feed', 'cold-outreach', 'referral', 'unknown']);
+let badVocab = 0;
+for (const e of entries) {
+  if (e.date < V2_CUTOFF) continue;
+  if (e.colCount < 14) continue; // Already flagged in Check 8
+  if (!VALID_CHANNELS.has(e.channel)) {
+    error(`#${e.num}: Invalid channel "${e.channel}" — allowed: ${[...VALID_CHANNELS].join(' | ')}`);
+    badVocab++;
+  }
+  if (!VALID_SOURCES.has(e.source)) {
+    error(`#${e.num}: Invalid source "${e.source}" — allowed: ${[...VALID_SOURCES].join(' | ')}`);
+    badVocab++;
+  }
+}
+if (badVocab === 0) ok('All channel/source values valid');
+
+// --- Check 10: TSV freshness ---
+if (!existsSync(TSV_FILE)) {
+  warn('applications.tsv not found — run merge-tracker to generate it');
+} else {
+  const mdStat = statSync(APPS_FILE);
+  const tsvStat = statSync(TSV_FILE);
+  if (tsvStat.mtimeMs < mdStat.mtimeMs) {
+    warn('TSV desincronizado, ejecutar merge-tracker');
+  } else {
+    ok('applications.tsv is up to date');
+  }
+}
 
 // --- Summary ---
 console.log('\n' + '='.repeat(50));

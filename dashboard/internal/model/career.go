@@ -14,6 +14,11 @@ type CareerApplication struct {
 	ReportNumber string
 	Notes        string
 	JobURL       string // URL of the original job posting
+	// Schema v2 fields (present for entries from 2026-06-23 onwards; empty for legacy entries)
+	Channel   string // How the candidacy was managed (portal/email/linkedin/referral/agency/direct)
+	Source    string // Where the offer was discovered (scan/linkedin/turijobs/infojobs/etc.)
+	CVVersion string // Which CV version was used
+	Cover     string // Cover letter sent? (yes/no/—)
 	// Enrichment (lazy loaded from report)
 	Archetype    string
 	TlDr         string

@@ -1,0 +1,28 @@
+# Career-Ops — Fuente de Oferta (Source Enum)
+# Fuente de verdad para el campo `source` en applications.md (v2, desde 2026-06-23).
+# Refleja DE DÓNDE salió la oferta (el origen del descubrimiento).
+
+sources:
+  - id: scan
+    label: scan
+    description: Detectada por el escáner automático de career-ops (aparece en scan-history.tsv)
+
+  - id: manual-search
+    label: manual-search
+    description: Búsqueda manual del usuario (navegando portales o buscadores directamente)
+
+  - id: linkedin-feed
+    label: linkedin-feed
+    description: Vista en el feed de LinkedIn (sin ser Easy Apply — eso va en channel)
+
+  - id: cold-outreach
+    label: cold-outreach
+    description: No había oferta pública; el candidato contactó a frío a la empresa
+
+  - id: referral
+    label: referral
+    description: Alguien (contacto personal o profesional) pasó la oferta al usuario
+
+  - id: unknown
+    label: unknown
+    description: No se puede determinar el origen de la oferta

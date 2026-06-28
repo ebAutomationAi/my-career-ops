@@ -11,19 +11,45 @@
  * Run: node career-ops/normalize-statuses.mjs [--dry-run]
  */
 
-import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const CAREER_OPS = dirname(fileURLToPath(import.meta.url));
-// Support both layouts: data/applications.md (boilerplate) and applications.md (original)
-const APPS_FILE = existsSync(join(CAREER_OPS, 'data/applications.md'))
-  ? join(CAREER_OPS, 'data/applications.md')
-  : join(CAREER_OPS, 'applications.md');
-const DRY_RUN = process.argv.includes('--dry-run');
 
-// Ensure required directories exist (fresh setup)
-mkdirSync(join(CAREER_OPS, 'data'), { recursive: true });
+// ── Profile resolution ──────────────────────────────────────────────
+const args = process.argv.slice(2);
+const profileFlag = args.indexOf('--profile');
+let profile = profileFlag !== -1 ? args[profileFlag + 1] : process.env.CAREER_OPS_PROFILE;
+
+if (!profile) {
+  const { createInterface } = await import('readline');
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  profile = await new Promise(resolve => {
+    rl.question('¿Qué perfil? (recepcionista / formacion): ', ans => { rl.close(); resolve(ans.trim()); });
+  });
+}
+
+if (!profile) {
+  console.error('Error: perfil no especificado. Usa --profile <nombre> o CAREER_OPS_PROFILE.');
+  process.exit(1);
+}
+
+const profileDir = join(CAREER_OPS, 'profiles', profile);
+if (!existsSync(profileDir)) {
+  const available = existsSync(join(CAREER_OPS, 'profiles'))
+    ? readdirSync(join(CAREER_OPS, 'profiles')).filter(d => !d.startsWith('.')).join(', ')
+    : '(ninguno)';
+  console.error(`Error: perfil "${profile}" no existe en profiles/. Disponibles: ${available}`);
+  process.exit(1);
+}
+
+console.log(`[Perfil activo: ${profile}]`);
+
+const APPS_FILE = join(profileDir, 'data/applications.md');
+const DRY_RUN = args.includes('--dry-run');
+
+mkdirSync(join(profileDir, 'data'), { recursive: true });
 
 // Canonical status mapping
 function normalizeStatus(raw) {

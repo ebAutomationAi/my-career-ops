@@ -20,17 +20,44 @@ import { fileURLToPath } from 'url';
 import { execFileSync } from 'child_process';
 
 const CAREER_OPS = dirname(fileURLToPath(import.meta.url));
-// Support both layouts: data/applications.md (boilerplate) and applications.md (original)
-const APPS_FILE = existsSync(join(CAREER_OPS, 'data/applications.md'))
-  ? join(CAREER_OPS, 'data/applications.md')
-  : join(CAREER_OPS, 'applications.md');
+
+// ── Profile resolution ──────────────────────────────────────────────
+const args = process.argv.slice(2);
+const profileFlag = args.indexOf('--profile');
+let profile = profileFlag !== -1 ? args[profileFlag + 1] : process.env.CAREER_OPS_PROFILE;
+
+if (!profile) {
+  const { createInterface } = await import('readline');
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  profile = await new Promise(resolve => {
+    rl.question('¿Qué perfil? (recepcionista / formacion): ', ans => { rl.close(); resolve(ans.trim()); });
+  });
+}
+
+if (!profile) {
+  console.error('Error: perfil no especificado. Usa --profile <nombre> o CAREER_OPS_PROFILE.');
+  process.exit(1);
+}
+
+const profileDir = join(CAREER_OPS, 'profiles', profile);
+if (!existsSync(profileDir)) {
+  const available = existsSync(join(CAREER_OPS, 'profiles'))
+    ? readdirSync(join(CAREER_OPS, 'profiles')).filter(d => !d.startsWith('.')).join(', ')
+    : '(ninguno)';
+  console.error(`Error: perfil "${profile}" no existe en profiles/. Disponibles: ${available}`);
+  process.exit(1);
+}
+
+console.log(`[Perfil activo: ${profile}]`);
+
+const APPS_FILE = join(profileDir, 'data/applications.md');
 const ADDITIONS_DIR = join(CAREER_OPS, 'batch/tracker-additions');
 const MERGED_DIR = join(ADDITIONS_DIR, 'merged');
 const DRY_RUN = process.argv.includes('--dry-run');
 const VERIFY = process.argv.includes('--verify');
 
-// Ensure required directories exist (fresh setup)
-mkdirSync(join(CAREER_OPS, 'data'), { recursive: true });
+// Ensure required directories exist
+mkdirSync(join(profileDir, 'data'), { recursive: true });
 mkdirSync(ADDITIONS_DIR, { recursive: true });
 
 // Canonical states and aliases
@@ -168,7 +195,11 @@ function parseAppLine(line) {
   return {
     num, date: parts[2], company: parts[3], role: parts[4],
     score: parts[5], status: parts[6], pdf: parts[7], report: parts[8],
-    notes: parts[9] || '', raw: line,
+    notes: parts[9] || '',
+    // Schema v2 fields (empty for legacy entries)
+    channel: parts[10] || '', source: parts[11] || '',
+    url: parts[12] || '', cv: parts[13] || '', cover: parts[14] || '',
+    raw: line,
   };
 }
 
@@ -190,7 +221,7 @@ function parseTsvContent(content, filename) {
       console.warn(`⚠️  Skipping malformed pipe-delimited ${filename}: ${parts.length} fields`);
       return null;
     }
-    // Format: num | date | company | role | score | status | pdf | report | notes
+    // Format: num | date | company | role | score | status | pdf | report | notes [| channel | source | url | cv | cover]
     addition = {
       num: parseInt(parts[0]),
       date: parts[1],
@@ -201,6 +232,12 @@ function parseTsvContent(content, filename) {
       pdf: parts[6],
       report: parts[7],
       notes: parts[8] || '',
+      // Schema v2 (optional)
+      channel: parts[9] || '',
+      source: parts[10] || '',
+      url: parts[11] || '',
+      cv: parts[12] || '',
+      cover: parts[13] || '',
     };
   } else {
     // Tab-separated
@@ -244,6 +281,12 @@ function parseTsvContent(content, filename) {
       pdf: parts[6],
       report: parts[7],
       notes: parts[8] || '',
+      // Schema v2 (optional — present in 14-col TSV, empty for 9-col legacy)
+      channel: parts[9] || '',
+      source: parts[10] || '',
+      url: parts[11] || '',
+      cv: parts[12] || '',
+      cover: parts[13] || '',
     };
   }
 
@@ -253,6 +296,38 @@ function parseTsvContent(content, filename) {
   }
 
   return addition;
+}
+
+// ── TSV Export ──────────────────────────────────────────────────────────────
+function generateTsv(lines, appsFile) {
+  const tsvFile = appsFile.replace(/\.md$/, '.tsv');
+  const header = 'num\tdate\tcompany\trole\tscore\tstatus\tpdf\treport\tnotes\tchannel\tsource\turl\tcv\tcover';
+  const rows = [header];
+
+  for (const line of lines) {
+    if (!line.startsWith('|')) continue;
+    const app = parseAppLine(line);
+    if (!app) continue;
+    rows.push([
+      app.num,
+      app.date,
+      app.company,
+      app.role,
+      app.score.replace(/\*\*/g, ''),
+      app.status,
+      app.pdf,
+      app.report,
+      app.notes,
+      app.channel,
+      app.source,
+      app.url,
+      app.cv,
+      app.cover,
+    ].join('\t'));
+  }
+
+  writeFileSync(tsvFile, rows.join('\n') + '\n', { encoding: 'utf8' });
+  console.log(`📄 applications.tsv generated (${rows.length - 1} entries)`);
 }
 
 // ---- Main ----
@@ -288,7 +363,6 @@ if (!existsSync(ADDITIONS_DIR)) {
 const tsvFiles = readdirSync(ADDITIONS_DIR).filter(f => f.endsWith('.tsv'));
 if (tsvFiles.length === 0) {
   console.log('✅ No pending additions to merge.');
-  process.exit(0);
 }
 
 // Sort files numerically for deterministic processing
@@ -359,7 +433,7 @@ for (const file of tsvFiles) {
     const entryNum = addition.num > maxNum ? addition.num : ++maxNum;
     if (addition.num > maxNum) maxNum = addition.num;
 
-    const newLine = `| ${entryNum} | ${addition.date} | ${addition.company} | ${addition.role} | ${addition.score} | ${addition.status} | ${addition.pdf} | ${addition.report} | ${addition.notes} |`;
+    const newLine = `| ${entryNum} | ${addition.date} | ${addition.company} | ${addition.role} | ${addition.score} | ${addition.status} | ${addition.pdf} | ${addition.report} | ${addition.notes} | ${addition.channel || ''} | ${addition.source || ''} | ${addition.url || ''} | ${addition.cv || ''} | ${addition.cover || ''} |`;
     newLines.push(newLine);
     added++;
     console.log(`➕ Add #${entryNum}: ${addition.company} — ${addition.role} (${addition.score})`);
@@ -386,12 +460,17 @@ if (!DRY_RUN) {
   writeFileSync(APPS_FILE, appLines.join('\n'));
 
   // Move processed files to merged/
-  if (!existsSync(MERGED_DIR)) mkdirSync(MERGED_DIR, { recursive: true });
-  for (const file of tsvFiles) {
-    renameSync(join(ADDITIONS_DIR, file), join(MERGED_DIR, file));
+  if (tsvFiles.length > 0) {
+    if (!existsSync(MERGED_DIR)) mkdirSync(MERGED_DIR, { recursive: true });
+    for (const file of tsvFiles) {
+      renameSync(join(ADDITIONS_DIR, file), join(MERGED_DIR, file));
+    }
+    console.log(`\n✅ Moved ${tsvFiles.length} TSVs to merged/`);
   }
-  console.log(`\n✅ Moved ${tsvFiles.length} TSVs to merged/`);
 }
+
+// Always regenerate TSV at the end (even with no additions), never in dry-run.
+if (!DRY_RUN) generateTsv(appLines, APPS_FILE);
 
 console.log(`\n📊 Summary: +${added} added, 🔄${updated} updated, ⏭️${skipped} skipped`);
 if (DRY_RUN) console.log('(dry-run — no changes written)');

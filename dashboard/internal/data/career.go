@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/santifer/career-ops/dashboard/internal/model"
+	"github.com/ebAutomationAi/my-career-ops/dashboard/internal/model"
 )
 
 var (
@@ -107,6 +107,24 @@ func ParseApplications(careerOpsPath string) []model.CareerApplication {
 			app.Notes = fields[8]
 		}
 
+		// Schema v2 fields (fields 9-13, present for entries from 2026-06-23; empty for legacy)
+		if len(fields) > 9 {
+			app.Channel = fields[9]
+		}
+		if len(fields) > 10 {
+			app.Source = fields[10]
+		}
+		if len(fields) > 11 && fields[11] != "" && strings.HasPrefix(fields[11], "http") {
+			// Explicit URL column takes precedence \u2014 skip 5-tier enrichment for this entry
+			app.JobURL = fields[11]
+		}
+		if len(fields) > 12 {
+			app.CVVersion = fields[12]
+		}
+		if len(fields) > 13 {
+			app.Cover = fields[13]
+		}
+
 		apps = append(apps, app)
 	}
 
@@ -120,6 +138,10 @@ func ParseApplications(careerOpsPath string) []model.CareerApplication {
 	reportNumURLs := loadJobURLs(careerOpsPath)
 
 	for i := range apps {
+		// Skip 5-tier enrichment for v2 entries that already have an explicit URL column
+		if apps[i].JobURL != "" {
+			continue
+		}
 		if apps[i].ReportPath == "" {
 			continue
 		}

@@ -1,0 +1,18 @@
+url	first_seen	portal	title	company	status	location
+https://example.com/jobs/1	2026-06-02	local-parser	Night Auditor	Test Hotel	added	Barcelona
+https://jobs.smartrecruiters.com/AccorHotel/postings/744000130504911	2026-06-09	smartrecruiters-api	Front Office Supervisor- Ibis budget Barcelona Center	Accor Hotels España	added	Barcelona, CT, Spain
+https://jobs.smartrecruiters.com/AccorHotel/postings/744000130193629	2026-06-09	smartrecruiters-api	Night Auditor	Accor Hotels España	added	Barcelona, CT, Spain
+https://jobs.smartrecruiters.com/AccorHotel/postings/744000129706356	2026-06-09	smartrecruiters-api	Front Office Agent	Accor Hotels España	added	Barcelona, CT, Spain
+https://jobs.smartrecruiters.com/AccorHotel/postings/744000126283639	2026-06-09	smartrecruiters-api	Front Office Team Leader- ¡Open Day! Ibis Budget Barcelona Center	Accor Hotels España	added	Barcelona, CT, Spain
+https://careers.melia.com/job/Barcelona-Guest-Service-Line-Agent-%28Contrato-de-sustituci%C3%B3n%29-Torre-Melina-A-Gran-Meli%C3%A1-Hotel/1401931933/	2026-06-09	local-parser	Guest Service Line Agent (Contrato de sustitución) - Torre Melina A Gran Meliá Hotel	Meliá Hotels	added	Barcelona, ES
+https://careers.melia.com/job/Barcelona-Front-Office-Assistant-Meli%C3%A1-Barcelona-Sky/1391833633/	2026-06-09	local-parser	Front Office Assistant - Meliá Barcelona Sky	Meliá Hotels	added	Barcelona, ES
+https://careers.melia.com/job/Barcelona-Front-Office-Agent-Torre-Melina-a-Gran-Melia-Hotel/1287064701/	2026-06-09	local-parser	Front Office Agent - Torre Melina a Gran Melia Hotel	Meliá Hotels	added	Barcelona, ES
+https://careers.melia.com/job/Barcelona-Front-Office-Agent-Meli%C3%A1-Barcelona-Sarri%C3%A0/1403361633/	2026-06-11	local-parser	Front Office Agent - MeliÃ¡ Barcelona SarriÃ	Meliá Hotels	added	Barcelona, ES
+https://careers.melia.com/job/Barcelona-Front-Office-Agent-INNSIDE-by-Meli%C3%A1-Barcelona-Aeropuerto/1398112833/	2026-06-11	local-parser	Front Office Agent - INNSIDE by MeliÃ¡ Barcelona Aeropuerto	Meliá Hotels	added	Barcelona, ES
+https://jobs.grupohotusa.com/job/EXE-PARC-DEL-VALLES-%2812%29-Recepcionista-Hotel-4-Cerdanyola-del-Vall%C3%A8s-Barc-EXE-PARC-D/1362486457/	2026-06-11	local-parser	Recepcionista Hotel 4* - Cerdanyola del VallÃ¨s	Hotusa / Eurostars	added	
+https://jobs.grupohotusa.com/job/EUROSTARS-MONUMENTAL-%2851%29-Recepcionista-Hotel-4-Barcelona-Barc-EUROSTARS/1361815357/	2026-06-11	local-parser	Recepcionista Hotel 4* - Barcelona	Hotusa / Eurostars	added	Barcelona
+https://jobs.grupohotusa.com/job/EXE-BARBERA-PARC-%2832%29-Recepcionista-Hotel-4-Barc-EXE-BARBER/1361695757/	2026-06-11	local-parser	Recepcionista Hotel 4*	Hotusa / Eurostars	added	
+https://careers.melia.com/job/Barcelona-Recepcionista-MIM-Sitges/1382281533/	2026-06-12	local-parser	Recepcionista - MIM Sitges	Meliá Hotels	added	Barcelona, ES
+https://jobs.smartrecruiters.com/AccorHotel/postings/744000126282364	2026-06-12	smartrecruiters-api	Recepcionista- Ibis budget Barcelona Center	Accor	added	Barcelona, CT, Spain
+https://jobs.smartrecruiters.com/AccorHotel/postings/744000124826349	2026-06-12	smartrecruiters-api	Recepcionista Polivalente	Accor	added	Barcelona, CT, Spain
+https://jobs.orbio.work/vincci-hoteles/recepcionista-hotel-vincci-mae-4-barcelona/c9ad4db9-df44-4b31-9b25-78d4ce089d8c	2026-06-12	orbio-api	Recepcionista Hotel Vincci Mae 4* Barcelona	Vincci Hoteles	added	Sarrià-Sant Gervasi, Barcelona

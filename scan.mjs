@@ -38,14 +38,11 @@ const parseYaml = yaml.load;
 
 // ── Config ──────────────────────────────────────────────────────────
 
-const PORTALS_PATH = process.env.CAREER_OPS_PORTALS || 'portals.yml';
-const SCAN_HISTORY_PATH = 'data/scan-history.tsv';
-const PIPELINE_PATH = 'data/pipeline.md';
-const APPLICATIONS_PATH = 'data/applications.md';
+let PORTALS_PATH;
+let SCAN_HISTORY_PATH;
+let PIPELINE_PATH;
+let APPLICATIONS_PATH;
 const PROVIDERS_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'providers');
-
-// Ensure required directories exist (fresh setup)
-mkdirSync('data', { recursive: true });
 
 const CONCURRENCY = 10;
 const SEARCH_DELAY_MS = 2500;
@@ -488,6 +485,40 @@ async function main() {
   const verify = args.includes('--verify');
   const companyFlag = args.indexOf('--company');
   const filterCompany = companyFlag !== -1 ? args[companyFlag + 1]?.toLowerCase() : null;
+
+  // ── Profile resolution ──────────────────────────────────────────────
+  const profileFlag = args.indexOf('--profile');
+  let profile = profileFlag !== -1 ? args[profileFlag + 1] : process.env.CAREER_OPS_PROFILE;
+
+  if (!profile) {
+    const { createInterface } = await import('readline');
+    const rl = createInterface({ input: process.stdin, output: process.stdout });
+    profile = await new Promise(resolve => {
+      rl.question('¿Qué perfil? (recepcionista / formacion): ', ans => { rl.close(); resolve(ans.trim()); });
+    });
+  }
+
+  if (!profile) {
+    console.error('Error: perfil no especificado. Usa --profile <nombre> o CAREER_OPS_PROFILE.');
+    process.exit(1);
+  }
+
+  const profileDir = path.resolve(`profiles/${profile}`);
+  if (!existsSync(profileDir)) {
+    const available = existsSync('profiles')
+      ? readdirSync('profiles').filter(d => !d.startsWith('.')).join(', ')
+      : '(ninguno)';
+    console.error(`Error: perfil "${profile}" no existe en profiles/. Disponibles: ${available}`);
+    process.exit(1);
+  }
+
+  console.log(`[Perfil activo: ${profile}]`);
+
+  PORTALS_PATH      = process.env.CAREER_OPS_PORTALS || path.join(profileDir, 'portals.yml');
+  SCAN_HISTORY_PATH = path.join(profileDir, 'data/scan-history.tsv');
+  PIPELINE_PATH     = path.join(profileDir, 'data/pipeline.md');
+  APPLICATIONS_PATH = path.join(profileDir, 'data/applications.md');
+  mkdirSync(path.join(profileDir, 'data'), { recursive: true });
 
   // 1. Load providers
   const providers = await loadProviders(PROVIDERS_DIR);

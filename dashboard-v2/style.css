@@ -1,0 +1,195 @@
+:root {
+  --bg:      #f5f6f8;
+  --card:    #ffffff;
+  --text:    #1c1e2b;
+  --muted:   #6b7280;
+  --border:  #e2e5ea;
+  --accent:  #3b6fd4;
+  --green:   #2d8f55;
+  --yellow:  #9a6e00;
+  --red:     #bf3030;
+  --r:       8px;
+  --sh:      0 1px 3px rgba(0,0,0,.07);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+
+header {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+h1 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent);
+  flex: 1;
+  white-space: nowrap;
+}
+
+.ctl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ctl label { color: var(--muted); font-size: 12px; }
+
+select {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card);
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  outline-color: var(--accent);
+}
+
+button {
+  padding: 4px 12px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+button:hover { opacity: .84; }
+button:active { opacity: .72; }
+
+/* ── Status bar ──────────────────────────────────────────────────────────── */
+
+#sbar {
+  padding: 4px 20px;
+  font-size: 12px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  min-height: 26px;
+  line-height: 18px;
+}
+#sbar.err { color: var(--red); }
+#sbar.ok  { color: var(--green); }
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--sh);
+  padding: 18px 20px;
+  overflow-x: auto;
+}
+
+h2 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── SVG bar chart ───────────────────────────────────────────────────────── */
+
+.bar-chart {
+  display: block;
+  min-width: 380px;
+}
+
+/* SVG text: set via SVG attribute dominant-baseline="middle" in JS */
+.bl { font-size: 12px; fill: #444; }
+.bc { font-size: 12px; fill: #555; }
+
+/* ── Tables ──────────────────────────────────────────────────────────────── */
+
+.dt {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 380px;
+}
+
+.dt th {
+  text-align: left;
+  padding: 6px 10px;
+  background: #f0f2f6;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.dt td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #eef0f4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+.dt tr:last-child td { border-bottom: none; }
+.dt tr:hover td { background: #f7f9fb; }
+
+.dt td.r { text-align: right; font-variant-numeric: tabular-nums; }
+.dt td.trole { max-width: 200px; }
+
+/* ── Age color coding ────────────────────────────────────────────────────── */
+
+.red { color: var(--red);    font-weight: 600; }
+.ylw { color: var(--yellow); font-weight: 600; }
+.grn { color: var(--green); }
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+
+.empty {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 12px 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  header   { padding: 8px 12px; }
+  h1       { font-size: 15px; }
+  section  { padding: 14px 12px; }
+  main     { padding: 12px 8px; gap: 14px; }
+
+  .dt th,
+  .dt td   { padding: 5px 7px; }
+}
