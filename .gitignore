@@ -79,3 +79,5 @@ _extract_novotel.mjs
 dump-minor.mjs
 test-accor-raw.mjs
 bundle-project.py
+*.backup
+profiles/*/conversacion-inicial*.txt
