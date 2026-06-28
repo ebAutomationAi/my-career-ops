@@ -44,3 +44,142 @@ Formador tecnológico con +20 años de experiencia IT que combina base técnica 
 ## Narrativa de candidatura
 
 "Formador con base IT real, no solo pedagógica. He formado equipos en entornos corporativos exigentes (Affinity Petcare, 15 años) y tengo la habilitación SSCE0110 que acredita mi competencia docente. Traigo la mentalidad de quien ha resuelto problemas técnicos complejos y sabe explicarlos de forma que la gente los entiende y los aplica."
+
+## Guardrails
+
+```yaml
+guardrails:
+  min_boost_score: 3
+
+  hard_blockers:
+    - "comercial"
+    - "ventas"
+    - "hostelería"
+    - "camarero"
+    - "cocina"
+    - "limpieza"
+    - "almacén"
+    - "reparto"
+    - "mozo"
+    - "atención al cliente"
+    - "marketing"
+    - "administrativo"
+    - "recepcionista"
+    - "call center"
+    - "dependiente"
+    - "teleoperador"
+    - "promotor"
+    - "prácticas"
+    - "becario"
+    - "sin experiencia"
+    - "formación no reglada"
+    - "automoción"
+    - "soldadura"
+    - "electricidad industrial"
+    - "fontanería"
+    - "peluquería"
+    - "estética"
+    - "mecánica"
+
+  soft_blockers:
+    - id: low_fit_generic
+      patterns:
+        - "soporte técnico"
+        - "helpdesk"
+        - "microinformática"
+        - "técnico de usuarios"
+        - "mesa de ayuda"
+      weight: 1
+      reason: "Útil solo si no hay mejores opciones"
+
+    - id: non_target_services
+      patterns:
+        - "limpieza de oficinas"
+        - "dependencia"
+        - "cuidados"
+        - "cuidado de mayores"
+        - "seguridad privada"
+        - "conserje"
+      weight: 2
+      reason: "Sectores fuera del objetivo"
+
+  boost:
+    - id: ia_ai
+      patterns:
+        - "inteligencia artificial"
+        - "IA"
+        - "AI"
+        - "machine learning"
+        - "deep learning"
+        - "big data"
+        - "datos"
+        - "data"
+        - "LLM"
+        - "agentes IA"
+        - "orquestación"
+        - "automatización"
+        - "prompt engineering"
+        - "n8n"
+        - "make"
+        - "zapier"
+        - "power automate"
+      weight: 3
+      reason: "IA, datos y automatización"
+
+    - id: fp_docencia
+      patterns:
+        - "FP"
+        - "formación profesional"
+        - "ciclo formativo"
+        - "grado superior"
+        - "grado medio"
+        - "docente"
+        - "profesor"
+        - "formador"
+        - "tutor"
+        - "certificado de profesionalidad"
+        - "habilitación docente"
+        - "SSCE0110"
+      weight: 3
+      reason: "Docencia FP / certificación docente"
+
+    - id: it_core
+      patterns:
+        - "informática"
+        - "programación"
+        - "sistemas"
+        - "redes"
+        - "bases de datos"
+        - "ciberseguridad"
+        - "cloud"
+        - "devops"
+        - "python"
+        - "sql"
+        - "api"
+        - "backend"
+        - "software"
+        - "administración de sistemas"
+        - "telemática"
+      weight: 2
+      reason: "Perfil técnico IT"
+
+    - id: remote_hybrid
+      patterns:
+        - "remoto"
+        - "remote"
+        - "híbrido"
+        - "hybrid"
+        - "teletrabajo"
+      weight: 1
+      reason: "Formato remoto/híbrido"
+
+    - id: partial_hours
+      patterns:
+        - "parcial"
+        - "media jornada"
+        - "horas semanales"
+        - "part-time"
+        - "part time"
+      weight: 1
+      reason: "Compatible con jornada parcial"
+```

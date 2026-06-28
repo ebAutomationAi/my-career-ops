@@ -130,3 +130,77 @@ Aporta:
 - Sin restricciones laborales en España
 - Residencia: Barcelona
 - Disponibilidad inmediata
+
+## Guardrails
+
+```yaml
+guardrails:
+  min_boost_score: 2
+
+  hard_blockers:
+    - "inglés alto"
+    - "inglés avanzado"
+    - "english advanced"
+    - "C1 english"
+    - "native english"
+    - "fluent english"
+    - "inglés imprescindible"
+    - "dominio del inglés"
+    - "catalán nativo"
+    - "català natiu"
+    - "catalán imprescindible"
+    - "5 estrellas"
+    - "cinco estrellas"
+    - "luxury"
+    - "gran lujo"
+    - "hotel de lujo"
+    - "3 años de experiencia"
+    - "experiencia mínima de 3 años"
+    - "experiencia mínima 3 años"
+    - "mínimo 3 años"
+    - "at least 3 years"
+    - "aeropuerto"
+    - "airport"
+    - "El Prat"
+
+  soft_blockers: []
+
+  boost:
+    - id: night_shift
+      patterns:
+        - "noche"
+        - "nocturno"
+        - "nocturna"
+        - "night auditor"
+        - "night shift"
+        - "turno de noche"
+      weight: 2
+      reason: "Turno noche preferido"
+
+    - id: systems_it
+      patterns:
+        - "PMS"
+        - "Opera"
+        - "sistemas"
+        - "informática"
+        - "soporte técnico"
+      weight: 1
+      reason: "Menciona sistemas/IT"
+
+    - id: mid_star
+      patterns:
+        - "3 estrellas"
+        - "4 estrellas"
+        - "3*"
+        - "4*"
+      weight: 1
+      reason: "Hotel 3-4★"
+
+    - id: permanent_contract
+      patterns:
+        - "indefinido"
+        - "permanent"
+        - "estable"
+      weight: 1
+      reason: "Contrato indefinido"
+```
