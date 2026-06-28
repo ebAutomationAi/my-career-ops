@@ -34,6 +34,14 @@ REGLAS:
 
 - [x] https://jobs.orbio.work/vincci-hoteles/recepcionista-hotel-vincci-mae-4-barcelona/c9ad4db9-df44-4b31-9b25-78d4ce089d8c | Vincci Hoteles | Recepcionista Hotel Vincci Mae 4* Barcelona | ❌ DESCARTADA (filtro inglés B2 — screening no superable)
 
+- [ ] https://careers.melia.com/job/Barcelona-Front-Office-Supervisor-Torre-Melina-a-Gran-Melia-Hotel/1407404033/ | Meliá Hotels | Front Office Supervisor - Torre Melina a Gran Melia Hotel
+- [ ] https://careers.melia.com/job/Barcelona-Front-Office-Agent-INNSIDE-by-Meli%C3%A1-Barcelona-Apolo/1406437033/ | Meliá Hotels | Front Office Agent - INNSIDE by MeliÃ¡ Barcelona Apolo
+- [ ] https://careers.melia.com/job/Barcelona-Recepcionista-de-Noche-Meli%C3%A1-Barcelona-Sarri%C3%A0/1403361633/ | Meliá Hotels | Recepcionista de Noche - MeliÃ¡ Barcelona SarriÃ
+- [ ] https://jobs.grupohotusa.com/job/EXE-PLAZA-CATALUNYA-%28256-01%29-Recepcionista-Dorma-Plaza-Catalunya-4-Barc-EXE-PLAZA/1364860657/ | Hotusa / Eurostars | Recepcionista Dorma Plaza Catalunya 4*
+- [ ] https://jobs.grupohotusa.com/job/EUROSTARS-CRISTAL-PALACE-%284%29-Recepcionista-Eurostars-Cristal-Palace-4-Barc-EUROSTARS/1364452757/ | Hotusa / Eurostars | Recepcionista Eurostars Cristal Palace 4*
+- [ ] https://jobs.smartrecruiters.com/AccorHotel/postings/744000132636692 | Accor | Front Office Supervisor- Ibis budget Barcelona Center
+- [ ] https://euamcareers.minorhotels.com/job/Barcelona-Recepcionista-NH-Collection-Barcelona-Gran-Hotel-Calder%C3%B3n/1364903457/ | Minor Hotels | Recepcionista - NH Collection Barcelona Gran Hotel Calderón
+
 ## Pendientes
 
 <!-- Pega aquí las ofertas del barrido (Hosco / Turijobs / InfoJobs). Ejemplo:

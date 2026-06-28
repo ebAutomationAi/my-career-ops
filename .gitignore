@@ -47,6 +47,8 @@ bun.lock
 # Claude Code local
 .claude/settings.local.json
 .claude/memory/
+.claude/last-sync.txt
+.claude/hooks/check-sync.mjs
 career-dashboard
 
 # Debug / temp (parser development artifacts)

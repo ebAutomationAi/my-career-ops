@@ -11,12 +11,15 @@ This is a working system customized for Kiko's job search in Barcelona. The arch
 There are two layers. Read `DATA_CONTRACT.md` for the full list.
 
 **User Layer (NEVER auto-updated, personalization goes HERE):**
+
 - `cv.md`, `config/profile.yml`, `modes/_profile.md`, `article-digest.md`, `portals.yml`
 - `data/*`, `reports/*`, `output/*`, `interview-prep/*`, `writing-samples/*`
 - `profiles/*/cv.md`, `profiles/*/data/*`, `profiles/*/modes/_profile.md`
 
 **System Layer (auto-updatable, DON'T put user data here):**
+
 - `modes/_shared.md`, `modes/oferta.md`, all other modes
+
 - `AGENTS.md`, `CLAUDE.md`, `*.mjs` scripts, `dashboard/*`, `dashboard-v2/*`, `templates/*`, `batch/*`, `docs/*`, `fonts/*`
 - `.claude/skills/*`, `.claude/agents/*.md`, `.agents/skills/*`, `.qwen/skills/*`, `GEMINI.md`, `.github/*`
 
@@ -31,7 +34,9 @@ node update-system.mjs check
 ```
 
 Parse the JSON output:
+
 - `{"status": "update-available", "local": "1.0.0", "remote": "1.1.0", "changelog": "..."}` → tell the user:
+
   > "career-ops update available (v{local} → v{remote}). Your data (CV, profile, tracker, reports) will NOT be touched. Want me to update?"
   If yes → run `node update-system.mjs apply`. If no → run `node update-system.mjs dismiss`.
 - `{"status": "up-to-date"}` → say nothing
@@ -132,6 +137,7 @@ If `modes/_profile.md` is missing, copy from `modes/_profile.template.md` silent
 **If ANY of these is missing, enter onboarding mode.** Do NOT proceed with evaluations, scans, or any other mode until the basics are in place. Guide the user step by step:
 
 #### Step 1: CV (required)
+
 If `cv.md` is missing, ask:
 > "I don't have your CV yet. You can either:
 > 1. Paste your CV here and I'll convert it to markdown
@@ -143,6 +149,7 @@ If `cv.md` is missing, ask:
 Create `cv.md` from whatever they provide. Make it clean markdown with standard sections (Summary, Experience, Projects, Education, Skills).
 
 #### Step 2: Profile (required)
+
 If `config/profile.yml` is missing, copy from `config/profile.example.yml` and then ask:
 > "I need a few details to personalize the system:
 > - Your full name and email
@@ -155,15 +162,19 @@ If `config/profile.yml` is missing, copy from `config/profile.example.yml` and t
 Fill in `config/profile.yml` with their answers. For archetypes and targeting narrative, store the user-specific mapping in `modes/_profile.md` or `config/profile.yml` rather than editing `modes/_shared.md`.
 
 #### Step 3: Portals (recommended)
+
 If `portals.yml` is missing:
 > "I'll set up the job scanner with 45+ pre-configured companies. Want me to customize the search keywords for your target roles?"
 
 Copy `templates/portals.example.yml` → `portals.yml`. If they gave target roles in Step 2, update `title_filter.positive` to match.
 
-#### Step 4: Tracker
+#### Step 4: Tracker -
+
 If `data/applications.md` doesn't exist, create it:
+
 ```markdown
-# Applications Tracker
+
+# Applications Tracker -
 
 | # | Date | Company | Role | Score | Status | PDF | Report | Notes |
 |---|------|---------|------|-------|--------|-----|--------|-------|
