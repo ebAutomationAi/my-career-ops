@@ -61,7 +61,7 @@ Career-ops is agentic: Claude Code navigates career pages with Playwright, evalu
 
 > **Heads up: the first evaluations won't be great.** The system doesn't know you yet. Feed it context -- your CV, your career story, your proof points, your preferences, what you're good at, what you want to avoid. The more you nurture it, the better it gets. Think of it as onboarding a new recruiter: the first week they need to learn about you, then they become invaluable.
 
-Built by someone who used it to evaluate 740+ job offers, generate 100+ tailored CVs, and land a Head of Applied AI role.
+Built on career-ops by Santiago Fernández. This fork is customized by Kiko for a Barcelona-focused search: night receptionist roles (3–4 star hotels) and FP IT/AI trainer positions.
 
 ## Features
 

@@ -1,3 +1,5 @@
+> **Nota:** Este es un fork de career-ops adaptado para Kiko (búsqueda en Barcelona: recepción nocturna en hoteles 3–4 estrellas + formador FP). Sistema original construido por Santiago Fernández.
+
 # Career-Ops
 
 [English](README.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko-KR.md) | [日本語](README.ja.md) | [Українська](README.ua.md) | [Русский](README.ru.md) | [繁體中文](README.zh-TW.md)

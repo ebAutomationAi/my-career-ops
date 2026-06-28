@@ -2,9 +2,9 @@
 
 ## Origin
 
-This system was originally built to evaluate 740+ job offers, generate 100+ tailored CVs, and land a Head of Applied AI role. The archetypes, scoring logic, negotiation scripts, and proof point structure are designed for AI/automation roles but fully customizable.
+This system was built and adapted by Kiko (Enrico Claudio Bonometti) for a focused job search in Barcelona across two parallel tracks: hospitality reception/night auditor roles (3–4 star hotels, city center, night shift) and FP IT/AI trainer positions. The archetypes, scoring logic, location filters, and proof point structure reflect his specific career goals based on 13 years IT systems (Bossini), 15 years digital roles (Affinity Petcare), restaurant operations experience, and current FP teaching certifications.
 
-**It will work out of the box, but it's designed to be made yours.** If the archetypes don't match your career, the modes are in the wrong language, or the scoring doesn't fit your priorities -- just ask. You (AI Agent) can edit the user's files. The user says "change the archetypes to data engineering roles" and you do it. That's the whole point.
+This is a working system customized for Kiko's job search in Barcelona. The archetypes are pre-configured for receptionist and FP trainer roles. Modes include Spanish (modes/es/). If you're forking for your own search, customize the archetypes, location filters, and company list to your goals.
 
 ## Data Contract (CRITICAL)
 
