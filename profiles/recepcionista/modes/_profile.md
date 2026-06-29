@@ -165,8 +165,6 @@ guardrails:
     - "gran meliá"
 
     - "sitges"
-    - "miami"
-    - "stadium"
 
   soft_blockers: []
 
