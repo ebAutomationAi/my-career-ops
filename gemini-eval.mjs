@@ -49,19 +49,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 // ---------------------------------------------------------------------------
 const ROOT = dirname(fileURLToPath(import.meta.url));
 
-const PATHS = {
-  // Primary evaluation logic lives in these two mode files
-  shared:      join(ROOT, 'modes', '_shared.md'),
-  oferta:      join(ROOT, 'modes', 'oferta.md'),
-  // Canonical skill path referenced in Issue #344
-  evaluate:    join(ROOT, '.claude', 'skills', 'career-ops', 'SKILL.md'),
-  cv:          join(ROOT, 'cv.md'),
-  profile:     join(ROOT, 'modes', '_profile.md'),
-  profileYml:  join(ROOT, 'config', 'profile.yml'),
-  reports:     join(ROOT, 'reports'),
-  tracker:     join(ROOT, 'data', 'applications.md'),
-};
-
 // ---------------------------------------------------------------------------
 // CLI argument parsing
 // ---------------------------------------------------------------------------
@@ -83,6 +70,7 @@ if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
   OPTIONS
     --file <path>    Read JD from a file instead of inline text
     --model <name>   Gemini model to use (default: gemini-2.5-flash)
+    --profile <name> Profile to use (recepcionista | formacion) 
     --no-save        Do not save report to reports/ directory
     --help           Show this help
 
@@ -94,6 +82,9 @@ if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
   EXAMPLES
     node gemini-eval.mjs "We are looking for a Senior AI Engineer..."
     node gemini-eval.mjs --file ./jds/openai-swe.txt
+    node gemini-eval.mjs --profile recepcionista --file ./jds/oferta.txt
+    node gemini-eval.mjs --profile formacion --file ./jds/ilerna.txt
+
 `);
   process.exit(0);
 }
@@ -102,6 +93,7 @@ if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
 let jdText = '';
 let modelName = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 let saveReport = true;
+let profileName = null;
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--file' && args[i + 1]) {
@@ -115,6 +107,8 @@ for (let i = 0; i < args.length; i++) {
     modelName = args[++i];
   } else if (args[i] === '--no-save') {
     saveReport = false;
+  } else if (args[i] === '--profile' && args[i + 1]) {
+    profileName = args[++i];
   } else if (!args[i].startsWith('--')) {
     jdText += (jdText ? '\n' : '') + args[i];
   }
@@ -124,6 +118,21 @@ if (!jdText) {
   console.error('❌  No Job Description provided. Run with --help for usage.');
   process.exit(1);
 }
+
+const profileBase = profileName
+  ? join(ROOT, 'profiles', profileName)
+  : ROOT;
+
+const PATHS = {
+  shared:      join(ROOT, 'modes', '_shared.md'),
+  oferta:      join(ROOT, 'modes', 'oferta.md'),
+  evaluate:    join(ROOT, '.claude', 'skills', 'career-ops', 'SKILL.md'),
+  cv:          profileName ? join(profileBase, 'cv.md') : join(ROOT, 'cv.md'),
+  profile:     profileName ? join(profileBase, 'modes', '_profile.md') : join(ROOT, 'modes', '_profile.md'),
+  profileYml:  join(ROOT, 'config', 'profile.yml'),
+  reports:     join(ROOT, 'reports'),
+  tracker:     profileName ? join(profileBase, 'data', 'applications.md') : join(ROOT, 'data', 'applications.md'),
+};
 
 // ---------------------------------------------------------------------------
 // Validate environment
@@ -181,6 +190,14 @@ const ofertaLogic    = readFile(PATHS.oferta,      'modes/oferta.md');
 const cvContent      = readFile(PATHS.cv,          'cv.md');
 const profileContent = readFile(PATHS.profile,     'modes/_profile.md');
 const profileYml     = readFile(PATHS.profileYml,  'config/profile.yml');
+
+function extractThreshold(content) {
+  const match = content.match(
+    /\*\*Threshold:\*\*\s*score\s*>=\s*(\d+\.?\d*)/i
+  );
+  return match ? parseFloat(match[1]) : 4.5;
+}
+const threshold = extractThreshold(profileContent);
 
 // ---------------------------------------------------------------------------
 // Build the system prompt (mirrors the Claude skill router logic)
@@ -307,6 +324,11 @@ if (summaryMatch) {
   legitimacy = extract('LEGITIMACY');
 }
 
+const scoreNum = parseFloat(score);
+const autoStatus = (!isNaN(scoreNum) && scoreNum >= threshold)
+  ? 'Evaluated'
+  : 'Discarded';
+
 // ---------------------------------------------------------------------------
 // Save report
 // ---------------------------------------------------------------------------
@@ -339,9 +361,21 @@ ${evaluationText.replace(/---SCORE_SUMMARY---[\s\S]*?---END_SUMMARY---/, '').tri
     writeFileSync(reportPath, reportContent, 'utf-8');
     console.log(`\n✅  Report saved: reports/${filename}`);
 
-    // Append tracker entry reminder
-    console.log(`\n📊  Tracker entry (add to data/applications.md):`);
-    console.log(`    | ${num} | ${today} | ${company} | ${role} | ${score} | Evaluada | ❌ | [${num}](reports/${filename}) |`);
+    const batchDir = join(ROOT, 'batch', 'tracker-additions');
+    if (!existsSync(batchDir)) mkdirSync(batchDir, { recursive: true });
+    const timestamp = Date.now();
+    const tsvFilename = `${profileName || 'default'}-${timestamp}.tsv`;
+    const tsvPath = join(batchDir, tsvFilename);
+    const tsvLine = [
+      num, today, company, role,
+      `${score}/5`, autoStatus,
+      '❌', `[${num}](reports/${filename})`,
+      '', '', '', '', ''
+    ].join('\t');
+    writeFileSync(tsvPath, tsvLine + '\n', 'utf-8');
+    console.log(`\n✅  Tracker entry written: batch/tracker-additions/${tsvFilename}`);
+    console.log(`    Status: ${autoStatus} (score ${score} vs threshold ${threshold})`);
+    console.log(`    → Run: node merge-tracker.mjs --profile ${profileName || '<perfil>'}`);  
   } catch (err) {
     console.warn(`⚠️   Could not save report: ${err.message}`);
   }
