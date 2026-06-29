@@ -162,6 +162,11 @@ guardrails:
     - "aeropuerto"
     - "airport"
     - "El Prat"
+    - "gran meliá"
+    - "hostel"
+    - "sitges"
+    - "miami"
+    - "stadium"
 
   soft_blockers: []
 
