@@ -83,3 +83,11 @@ test-accor-raw.mjs
 bundle-project.py
 *.backup
 profiles/*/conversacion-inicial*.txt
+
+# Multi-profile user data
+profiles/*/data/applications.md
+profiles/*/data/applications.tsv
+profiles/*/data/pipeline.md
+profiles/*/data/scan-history.tsv
+profiles/*/data/follow-ups.md
+profiles/*/modes/_profile.md

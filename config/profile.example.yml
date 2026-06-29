@@ -1,0 +1,14 @@
+name: "Enrico Claudio Bonometti"
+nickname: "Kiko"
+email: "kikobonometti@gmail.com"
+phone: "+34 654 836 098"
+location: "Barcelona, España"
+nationality: "Italiana (UE)"
+
+language:
+  modes_dir: "modes/es"
+  accepted_in_offers:
+    - "castellano"
+    - "catalán"
+    - "italiano"
+    - "inglés"
