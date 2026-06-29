@@ -63,8 +63,10 @@ AI-powered, CLI-agnostic job search automation: pipeline tracking, offer evaluat
 | `followup-cadence.mjs` | Follow-up cadence calculator (JSON output) |
 | `data/follow-ups.md` | Follow-up history tracker |
 | `scan.mjs` | Zero-token portal scanner — hits Greenhouse/Ashby/Lever APIs directly, zero LLM cost |
+| `pre-filter.mjs` | Pre-filter pipeline via per-profile guardrails (hard blockers, soft blockers, boost score); moves non-matching entries to Procesadas |
 | `check-liveness.mjs` | Job posting liveness checker |
 | `liveness-core.mjs` | Shared liveness logic (expired signals win over generic Apply text) |
+| `docs/guardrails-spec.md` | Spec for the guardrails YAML block defined in each `profiles/{perfil}/modes/_profile.md` |
 | `reports/` | Evaluation reports (format: `{###}-{company-slug}-{YYYY-MM-DD}.md`). Blocks A-F + G (Posting Legitimacy). Header includes `**Legitimacy:** {tier}`. |
 
 ### First Run — Onboarding (IMPORTANT)
