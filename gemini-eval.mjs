@@ -261,7 +261,7 @@ const model = genAI.getGenerativeModel({
   model: modelName,
   generationConfig: {
     temperature: 0.4,      // deterministic enough for structured evaluation
-    maxOutputTokens: 8192, // full 7-block evaluation
+    maxOutputTokens: 16000, // full 7-block evaluation
   },
 });
 
