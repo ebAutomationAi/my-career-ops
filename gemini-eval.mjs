@@ -361,21 +361,26 @@ ${evaluationText.replace(/---SCORE_SUMMARY---[\s\S]*?---END_SUMMARY---/, '').tri
     writeFileSync(reportPath, reportContent, 'utf-8');
     console.log(`\n✅  Report saved: reports/${filename}`);
 
-    const batchDir = join(ROOT, 'batch', 'tracker-additions');
-    if (!existsSync(batchDir)) mkdirSync(batchDir, { recursive: true });
-    const timestamp = Date.now();
-    const tsvFilename = `${profileName || 'default'}-${timestamp}.tsv`;
-    const tsvPath = join(batchDir, tsvFilename);
-    const tsvLine = [
-      num, today, company, role,
-      `${score}/5`, autoStatus,
-      '❌', `[${num}](reports/${filename})`,
-      '', '', '', '', ''
-    ].join('\t');
-    writeFileSync(tsvPath, tsvLine + '\n', 'utf-8');
-    console.log(`\n✅  Tracker entry written: batch/tracker-additions/${tsvFilename}`);
-    console.log(`    Status: ${autoStatus} (score ${score} vs threshold ${threshold})`);
-    console.log(`    → Run: node merge-tracker.mjs --profile ${profileName || '<perfil>'}`);  
+    if (score === '?' || isNaN(scoreNum)) {
+      console.log(`\n⚠️  Score no parseado — TSV no generado. Evalúa manualmente.`);
+      console.log(`    Reporte guardado en: reports/${filename}`);
+    } else {
+      const batchDir = join(ROOT, 'batch', 'tracker-additions');
+      if (!existsSync(batchDir)) mkdirSync(batchDir, { recursive: true });
+      const timestamp = Date.now();
+      const tsvFilename = `${profileName || 'default'}-${timestamp}.tsv`;
+      const tsvPath = join(batchDir, tsvFilename);
+      const tsvLine = [
+        num, today, company, role,
+        `${score}/5`, autoStatus,
+        '❌', `[${num}](reports/${filename})`,
+        '', '', '', '', ''
+      ].join('\t');
+      writeFileSync(tsvPath, tsvLine + '\n', 'utf-8');
+      console.log(`\n✅  Tracker entry written: batch/tracker-additions/${tsvFilename}`);
+      console.log(`    Status: ${autoStatus} (score ${score} vs threshold ${threshold})`);
+      console.log(`    → Run: node merge-tracker.mjs --profile ${profileName || '<perfil>'}`);
+    }
   } catch (err) {
     console.warn(`⚠️   Could not save report: ${err.message}`);
   }
