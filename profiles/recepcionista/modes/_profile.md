@@ -131,6 +131,60 @@ Aporta:
 - Residencia: Barcelona
 - Disponibilidad inmediata
 
+## Instrucciones de evaluación para Gemini
+
+> Usa estos criterios exclusivamente. Ignora los archetypes tecnológicos
+> de oferta.md (FDE, SA, PM, LLMOps, Agentic, Transformation).
+> No aplican a este perfil.
+
+### Archetypes válidos
+- Recepcionista nocturno
+- Night Auditor / Auditor nocturno
+- Front Office Agent nocturno
+- Conserje nocturno
+- Recepción hotelera con turno noche exclusivo
+
+### Criterios de puntuación
+
+| Score | Condición |
+|-------|-----------|
+| 5.0 | Turno noche explícito + hotel 3-4★ + contrato indefinido + sin deal-breakers |
+| 4.5 | Turno noche explícito + hotel 3-4★ + algún gap menor |
+| 4.0 | Turno noche explícito + hotel 3-4★ |
+| 3.0 | Turno mixto o no especificado, pero con fuerte encaje nocturno |
+| 2.0 | Turno diurno, hotel 5★, luxury, o blockers parciales importantes |
+| 1.0 | Múltiples blockers o oferta claramente fuera de perfil |
+
+**Threshold:** score >= 4.0 → Evaluated. score < 4.0 → Discarded.
+
+### Deal-breakers automáticos (score = 1.0)
+- Turno no nocturno o exclusivamente diurno
+- Hotel 5★, luxury o gran lujo
+- Inglés alto, avanzado, imprescindible o dominio total
+- Catalán nativo o imprescindible
+- Ubicación fuera de Barcelona ciudad o L'Hospitalet
+- Aeropuerto o El Prat
+- Experiencia mínima de 3 años en hostelería exigida como barrera cerrada
+- Puestos que no sean recepción nocturna, night auditor o front office de noche
+
+### Deal-breakers fuertes (penalizan, no descartan automáticamente)
+- Turnos rotativos donde la noche sea ocasional
+- Oferta sin mención explícita a noche pero con funciones compatibles
+- Contratos temporales cortos con encaje nocturno muy fuerte
+- Inglés intermedio funcional si la oferta no exige nivel avanzado real
+
+### Señales positivas
+- "noche", "nocturno", "night auditor", "night shift" en título o descripción
+- Hotel 3★ o 4★ confirmado
+- Contrato indefinido
+- Mención a PMS: Opera, Sihot, Mews, Protel
+- Cierre de caja, cuadre nocturno o auditoría
+- Autonomía nocturna sin supervisión directa
+- Front office, check-in tardío, atención al huésped, incidencias nocturnas
+- Inglés conversacional operativo
+- Italiano nativo, español fluido, catalán básico valorado
+- Experiencia en soporte técnico, caja, auditoría o continuidad operativa
+
 ## Guardrails
 
 ```yaml
