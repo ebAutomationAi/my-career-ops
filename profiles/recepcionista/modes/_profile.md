@@ -163,7 +163,7 @@ guardrails:
     - "airport"
     - "El Prat"
     - "gran meliá"
-    - "hostel"
+
     - "sitges"
     - "miami"
     - "stadium"

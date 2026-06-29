@@ -1,4 +1,4 @@
-# Pipeline — Inbox de ofertas pendientes
+﻿# Pipeline — Inbox de ofertas pendientes
 
 <!--
 FORMATO (una oferta por línea, bajo "## Pendientes"):
@@ -63,40 +63,40 @@ REGLAS:
 ## Procesadas
 
 <!-- Aquí van las ofertas ya evaluadas/aplicadas (movidas desde Pendientes). -->
-- [x] https://euamcareers.minorhotels.com/job/Barcelona-Recepcionista-NH-Collection-Barcelona-Gran-Hotel-Calder%C3%B3n/1364903457/ | Minor Hotels | Recepcionista - NH Collection Barcelona Gran Hotel Calderón [pre-filter: hard_blocker: "hostel"]
+- [ ] https://euamcareers.minorhotels.com/job/Barcelona-Recepcionista-NH-Collection-Barcelona-Gran-Hotel-Calder%C3%B3n/1364903457/ | Minor Hotels | Recepcionista - NH Collection Barcelona Gran Hotel Calderón
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/front-office-agent/336000 | SLS Barcelona | Front Office Agent [pre-filter: hard_blocker: "5 estrellas"]
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-con-experiencia-para-hotel-4-estrellas-superior-centro-barcelona/334654 | Alexandra Barcelona Hotel | Recepcionista con experiencia para Hotel 4 estrellas superior centro Barcelona [pre-filter: hard_blocker: "3 años de experiencia"]
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-mf-ac-hotel-diagonal-illa/339838 | ACHM Hotels by Marriott | Recepcionista (m/f) - AC Hotel Diagonal Illa [pre-filter: hard_blocker: "luxury"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/j1-front-desk-lennox-hotel-miami-beach/337568 | Yurbban Hospitality Group | J1 Front Desk – Lennox Hotel [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-hotel-barcelona-no-temporada/337953 | Sinenger Consulting Selección de Personal | RECEPCIONISTA HOTEL BARCELONA  - no temporada [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/assistente-recepcionista-hoteleroa-incorporacion-inmediata-centro-de-barcelona/335736 | Hotel Ginebra Barcelona | Assistente Recepcionista Hotelero/a – Incorporación Inmediata – Centro de Barcelona [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionistafront-desk-agent-individual-reservations-ac-victoria-suites-hotel-4/337364 | AC Victoria Suites Hotel by Marriott | Recepcionista/Front Desk Agent & Individual reservations - AC Victoria Suites Hotel 4* [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-de-hotel-correturnos/338772 | Nuñez i Navarro Hotels | Recepcionista de Hotel - Correturnos [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-hostel/337772 | Hostel | Recepcionista Hostel [pre-filter: hard_blocker: "hostel"]
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/assistente-recepcionista-hoteleroa-incorporacion-inmediata-centro-de-barcelona/335736 | Hotel Ginebra Barcelona | Assistente Recepcionista Hotelero/a – Incorporación Inmediata – Centro de Barcelona
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionistafront-desk-agent-individual-reservations-ac-victoria-suites-hotel-4/337364 | AC Victoria Suites Hotel by Marriott | Recepcionista/Front Desk Agent & Individual reservations - AC Victoria Suites Hotel 4*
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-de-hotel-correturnos/338772 | Nuñez i Navarro Hotels | Recepcionista de Hotel - Correturnos
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-hostel/337772 | Hostel | Recepcionista Hostel
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-noches/339470 | Catalonia Hotels & Resorts | Recepcionista noches [pre-filter: hard_blocker: "inglés alto"]
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/guest-relations-recepcionista/336799 | Serras Collection | Guest relations (Recepcionista) [pre-filter: hard_blocker: "luxury"]
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-hotel-3-en-el-centro-de-barcelona-vacaciones/338568 | One Shot Hotels | Recepcionista Hotel 3* en el centro de Barcelona (Vacaciones) [pre-filter: hard_blocker: "inglés alto"]
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-hotel/336689 | Catalonia Hotels & Resorts | Recepcionista Hotel [pre-filter: hard_blocker: "inglés alto"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-en-h10-casanova/339370 | H10 Hotels | Recepcionista en H10 Casanova [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-temporal-nh-barcelona-stadium/338811 | Minor Hotels Europe & Americas | Recepcionista (temporal) - NH Barcelona Stadium [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-noche-hotel/336770 | Hoteles Garbí | Recepcionista Noche _Hotel [pre-filter: hard_blocker: "hostel"]
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-en-h10-casanova/339370 | H10 Hotels | Recepcionista en H10 Casanova
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-noche-hotel/336770 | Hoteles Garbí | Recepcionista Noche _Hotel
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/h-la-paloma-boutique-recepcionista-turno-tardenoche-de-duracion-determinada/335419 | H La Paloma | H La Paloma Boutique Recepcionista turno tarde/noche de duración determinada [pre-filter: hard_blocker: "3 años de experiencia"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-mim-sitges/334368 | Meliá Hotels International | Recepcionista - MIM Sitges [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-para-hotel-boutique-en-centro-de-barcelona/335296 | Bondia Hotels | Recepcionista para Hotel Boutique en centro de Barcelona [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-de-hotel-4sup/333262 | Hotel Indigo Barcelona - Plaza Catalunya InterContinental | Recepcionista de hotel 4*SUP [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-eurostars-cristal-palace-4/339398 | Grupo Hotusa | Recepcionista Eurostars Cristal Palace 4* [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-sustitucion-temporal-baja-paternidad/340196 | Radisson Hotel Group | Recepcionista – Sustitución Temporal (baja paternidad) [pre-filter: hard_blocker: "hostel"]
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-para-hotel-boutique-en-centro-de-barcelona/335296 | Bondia Hotels | Recepcionista para Hotel Boutique en centro de Barcelona
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-de-hotel-4sup/333262 | Hotel Indigo Barcelona - Plaza Catalunya InterContinental | Recepcionista de hotel 4*SUP
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-sustitucion-temporal-baja-paternidad/340196 | Radisson Hotel Group | Recepcionista – Sustitución Temporal (baja paternidad)
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-spagym-soho-house-barcelona/339925 | Soho House & Co | Recepcionista Spa/Gym - Soho House Barcelona [pre-filter: hard_blocker: "dominio del inglés"]
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-hotel-front-desk-hotel-occidental-diagonal-414/335224 | Barceló Hotel Group | Recepcionista Hotel (Front Desk) - Hotel Occidental Diagonal 414 [pre-filter: hard_blocker: "inglés alto"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-de-hotel-room-mate-barcelona/333579 | Room Mate Hotels | Recepcionista de Hotel - Room Mate Barcelona [pre-filter: hard_blocker: "hostel"]
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-de-hotel-room-mate-barcelona/333579 | Room Mate Hotels | Recepcionista de Hotel - Room Mate Barcelona
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-hotel-25h/340107 | Catalonia Hotels & Resorts | Recepcionista Hotel 25h [pre-filter: hard_blocker: "inglés alto"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-en-h10-marina-barcelona/339872 | H10 Hotels | Recepcionista en H10 Marina Barcelona [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-nh-collection-barcelona-gran-hotel-calderon/340144 | Minor Hotels Europe & Americas | Recepcionista - NH Collection Barcelona Gran Hotel Calderón [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/front-office-agent-torre-melina-a-gran-melia-hotel/333093 | Meliá Hotels International | Front Office Agent - Torre Melina a Gran Melia Hotel [pre-filter: hard_blocker: "hostel"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-novotel-barcelona-city/333596 | Novotel Barcelona City | Recepcionista – Novotel Barcelona City [pre-filter: hard_blocker: "hostel"]
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-en-h10-marina-barcelona/339872 | H10 Hotels | Recepcionista en H10 Marina Barcelona
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-novotel-barcelona-city/333596 | Novotel Barcelona City | Recepcionista – Novotel Barcelona City
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-de-hotel-mf/334675 | Hotel Gaudí | Recepcionista de hotel (m/f) [pre-filter: hard_blocker: "inglés imprescindible"]
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-en-cadena-hotelera-barcelona-ingles-intermedio/334585 | Ibis Plaza Glories 22@ | Recepcionista en Cadena hotelera, Barcelona, Inglés Intermedio [pre-filter: hard_blocker: "dominio del inglés"]
-- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-para-cobertura-de-vacaciones-3-meses-junio-julio-y-agosto-diurno/333497 | Chic & Basic Hotels | Recepcionista para cobertura de vacaciones (3 meses: Junio, Julio y Agosto). Diurno. [pre-filter: hard_blocker: "hostel"]
+- [ ] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-para-cobertura-de-vacaciones-3-meses-junio-julio-y-agosto-diurno/333497 | Chic & Basic Hotels | Recepcionista para cobertura de vacaciones (3 meses: Junio, Julio y Agosto). Diurno.
 - [x] https://careers.melia.com/job/Barcelona-Front-Office-Supervisor-Torre-Melina-a-Gran-Melia-Hotel/1407404033/ | Meliá Hotels | Front Office Supervisor - Torre Melina a Gran Melia Hotel [pre-filter: low_score: 0 < 2]
 - [x] https://jobs.smartrecruiters.com/AccorHotel/postings/744000132636692 | Accor | Front Office Supervisor- Ibis budget Barcelona Center [pre-filter: low_score: 0 < 2]
 - [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-polivalente/335795 | Alcamtravels | Recepcionista polivalente [pre-filter: low_score: 1 < 2]
+- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/j1-front-desk-lennox-hotel-miami-beach/337568 | Yurbban Hospitality Group | J1 Front Desk – Lennox Hotel [pre-filter: hard_blocker: "miami"]
+- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-temporal-nh-barcelona-stadium/338811 | Minor Hotels Europe & Americas | Recepcionista (temporal) - NH Barcelona Stadium [pre-filter: hard_blocker: "miami"]
+- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-mim-sitges/334368 | Meliá Hotels International | Recepcionista - MIM Sitges [pre-filter: hard_blocker: "sitges"]
+- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-eurostars-cristal-palace-4/339398 | Grupo Hotusa | Recepcionista Eurostars Cristal Palace 4* [pre-filter: hard_blocker: "miami"]
+- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-nh-collection-barcelona-gran-hotel-calderon/340144 | Minor Hotels Europe & Americas | Recepcionista - NH Collection Barcelona Gran Hotel Calderón [pre-filter: hard_blocker: "miami"]
+- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/front-office-agent-torre-melina-a-gran-melia-hotel/333093 | Meliá Hotels International | Front Office Agent - Torre Melina a Gran Melia Hotel [pre-filter: hard_blocker: "miami"]
+- [x] https://www.turijobs.com/es-es/oferta-trabajo/barcelona/recepcionista-hotel-barcelona-no-temporada/337953 | Sinenger Consulting Selección de Personal | RECEPCIONISTA HOTEL BARCELONA  - no temporada [pre-filter: low_score: 1 < 2]
