@@ -116,12 +116,13 @@ function evaluate(text, guardrails) {
   }
 
   let penalty = 0;
-  for (const s of (guardrails.soft_blockers || [])) {
-    if ((s.patterns || []).some(p => lower.includes(p.toLowerCase()))) {
-      penalty += s.weight ?? 0;
+  if (boostScore > 0) {
+    for (const s of (guardrails.soft_blockers || [])) {
+      if ((s.patterns || []).some(p => lower.includes(p.toLowerCase()))) {
+        penalty += s.weight ?? 0;
+      }
     }
-  }
-
+  }  
   const scoreFinal = boostScore - penalty;
   const minScore = guardrails.min_boost_score ?? 0;
 
