@@ -240,7 +240,7 @@ IMPORTANT OPERATING RULES FOR THIS CLI SESSION
    - For Block G (Legitimacy): analyze the JD text only; skip URL/page freshness checks.
    - Post-evaluation file saving is handled by the script, not by you.
 2. Generate Blocks A through G in full, in English, unless the JD is in another language.
-3. At the very end, output a machine-readable summary block in this exact format:
+3. CRITICAL: You MUST always output the machine-readable summary block below, even if you have to shorten previous blocks to fit within token limits. This block is required for automated processing. Output it as the very last thing:
 
 ---SCORE_SUMMARY---
 COMPANY: <company name or "Unknown">
