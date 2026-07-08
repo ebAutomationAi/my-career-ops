@@ -91,3 +91,5 @@ profiles/*/data/pipeline.md
 profiles/*/data/scan-history.tsv
 profiles/*/data/follow-ups.md
 profiles/*/modes/_profile.md
+*.docx
+verify-recepcionista-tmp.mjs
