@@ -46,7 +46,6 @@ const PROVIDERS_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)),
 
 const CONCURRENCY = 10;
 const SEARCH_DELAY_MS = 2500;
-const SEARCH_RETRY_DELAY_MS = 5000;
 
 // ── Provider loading ────────────────────────────────────────────────
 
@@ -172,104 +171,49 @@ export function buildLocationFilter(locationFilter) {
   };
 }
 
-const SEARCH_ENGINE_BASE = 'https://html.duckduckgo.com/html';
-const DDG_POST_URL = 'https://html.duckduckgo.com/html/';
+const SEARXNG_TIMEOUT_MS = 10000;
 
-const DDG_SEARCH_HEADERS = {
-  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-  'accept-language': 'en-US,en;q=0.9',
-  'content-type': 'application/x-www-form-urlencoded',
-  'origin': 'https://html.duckduckgo.com',
-  'referer': 'https://html.duckduckgo.com/',
-  'cache-control': 'no-cache',
-};
+async function fetchSearXNG(query, baseUrl, ctx) {
+  const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  const url = base + '/search?q=' + encodeURIComponent(query) + '&format=json&language=es';
 
-function decodeHtmlEntities(value) {
-  return String(value)
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&ldquo;/g, '“')
-    .replace(/&rdquo;/g, '”')
-    .replace(/&lsquo;/g, '‘')
-    .replace(/&rsquo;/g, '’');
-}
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SEARXNG_TIMEOUT_MS);
 
-function stripHtmlTags(value) {
-  return String(value).replace(/<[^>]*>/g, ' ');
-}
-
-function parseDuckDuckGoSearchResults(html) {
-  if (typeof html !== 'string') return [];
-  const results = [];
-  const seen = new Set();
-  const anchorRegex = /<a[^>]+class="[^"]*result__a[^"]*"[^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/gi;
-  for (const match of html.matchAll(anchorRegex)) {
-    const href = match[1];
-    const titleHtml = match[2];
-    let url;
-    try {
-      const parsed = new URL(href, SEARCH_ENGINE_BASE);
-      if (parsed.pathname === '/l/' && parsed.searchParams.has('uddg')) {
-        url = parsed.searchParams.get('uddg') || parsed.href;
-      } else {
-        url = parsed.href;
-      }
-    } catch {
-      continue;
-    }
-    if (!url.startsWith('http') || seen.has(url)) continue;
-    const title = decodeHtmlEntities(stripHtmlTags(titleHtml)).trim();
-    if (!title) continue;
-    seen.add(url);
-    results.push({ title, url });
-  }
-  // Fallback: protocol-relative DDG redirect links (handles DDG class renames)
-  const uddgRegex = /<a[^>]+href="(\/\/duckduckgo\.com\/l\/\?uddg=[^"]+)"[^>]*>(.*?)<\/a>/gi;
-  for (const match of html.matchAll(uddgRegex)) {
-    let url;
-    try {
-      const parsed = new URL('https:' + match[1]);
-      url = parsed.searchParams.get('uddg') || '';
-    } catch {
-      continue;
-    }
-    if (!url.startsWith('http') || seen.has(url)) continue;
-    const title = decodeHtmlEntities(stripHtmlTags(match[2])).trim();
-    if (!title) continue;
-    seen.add(url);
-    results.push({ title, url });
-  }
-  return results;
-}
-
-async function fetchSearchQueryWithRetry(query, ctx) {
   try {
-    return await fetchSearchQuery(query, ctx);
-  } catch (err) {
-    if (!err.message.startsWith('search blocked')) throw err;
-    await new Promise(r => setTimeout(r, SEARCH_RETRY_DELAY_MS));
-    return await fetchSearchQuery(query, ctx);
-  }
-}
+    const text = await ctx.fetchText(url, {
+      method: 'GET',
+      headers: { 'accept': 'application/json' },
+      signal: controller.signal,
+    });
 
-async function fetchSearchQuery(query, ctx) {
-  const body = new URLSearchParams({ q: query, b: '', kl: '' }).toString();
-  const html = await ctx.fetchText(DDG_POST_URL, {
-    method: 'POST',
-    headers: DDG_SEARCH_HEADERS,
-    body,
-    redirect: 'follow',
-  });
-  const results = parseDuckDuckGoSearchResults(html);
-  if (results.length === 0 && !html.includes('result__a')) {
-    throw new Error(`search blocked or empty page, ${html.length} bytes`);
+    let payload;
+    try {
+      payload = JSON.parse(text);
+    } catch (err) {
+      throw new Error(`SearXNG returned non-JSON (${text.length} bytes)`);
+    }
+
+    const results = Array.isArray(payload.results) ? payload.results : [];
+    const seen = new Set();
+    const out = [];
+    for (const r of results) {
+      if (typeof r?.url !== 'string' || !r.url.startsWith('http')) continue;
+      if (typeof r?.title !== 'string' || !r.title.trim()) continue;
+      if (seen.has(r.url)) continue;
+      seen.add(r.url);
+      let hostname;
+      try {
+        hostname = new URL(r.url).hostname.replace(/^www\./, '');
+      } catch {
+        continue;
+      }
+      out.push({ title: r.title.trim(), url: r.url, company: hostname });
+    }
+    return out;
+  } finally {
+    clearTimeout(timeout);
   }
-  return results;
 }
 
 function enabledSearchQueries(config) {
@@ -630,44 +574,63 @@ async function main() {
 
   await parallelFetch(tasks, CONCURRENCY);
 
-  for (let i = 0; i < searchQueries.length; i++) {
-    const query = searchQueries[i];
-    if (i > 0) await new Promise(r => setTimeout(r, SEARCH_DELAY_MS));
-    const ctx = makeHttpCtx();
-    try {
-      const results = await fetchSearchQueryWithRetry(query.query, ctx);
-      totalSearchResults += results.length;
-      for (const result of results) {
-        if (!titleFilter(result.title)) {
-          totalFilteredTitle++;
-          continue;
+  const searxngBaseUrl =
+    config.search_engine?.base_url ||
+    process.env.SEARXNG_URL ||
+    null;
+
+  if (searchQueries.length > 0 && !searxngBaseUrl) {
+    console.log(
+      `⚠️  ${searchQueries.length} search_queries definidas pero ` +
+      `no hay SearXNG configurado — saltando.`
+    );
+    console.log(
+      `   Configura search_engine.base_url en portals.yml ` +
+      `o exporta SEARXNG_URL.`
+    );
+  } else if (searchQueries.length > 0) {
+    console.log(`SearXNG endpoint: ${searxngBaseUrl}`);
+    for (let i = 0; i < searchQueries.length; i++) {
+      const query = searchQueries[i];
+      if (i > 0) await new Promise(r => setTimeout(r, SEARCH_DELAY_MS));
+      const ctx = makeHttpCtx();
+      try {
+        const results = await fetchSearXNG(query.query, searxngBaseUrl, ctx);
+        totalSearchResults += results.length;
+        for (const result of results) {
+          if (!titleFilter(result.title)) {
+            totalFilteredTitle++;
+            continue;
+          }
+          if (!locationFilter(result.location)) {
+            totalFilteredLocation++;
+            continue;
+          }
+          if (seenUrls.has(result.url)) {
+            totalDupes++;
+            continue;
+          }
+          const key = `${result.company.toLowerCase()}::${result.title.toLowerCase()}`;
+          if (seenCompanyRoles.has(key)) {
+            totalDupes++;
+            continue;
+          }
+          seenUrls.add(result.url);
+          seenCompanyRoles.add(key);
+          newOffers.push({
+            title: result.title,
+            url: result.url,
+            company: result.company,
+            location: result.location || '',
+            source: `searxng:${query.name || query.query}`,
+          });
         }
-        if (!locationFilter(result.location)) {
-          totalFilteredLocation++;
-          continue;
-        }
-        if (seenUrls.has(result.url)) {
-          totalDupes++;
-          continue;
-        }
-        const company = result.company || new URL(result.url).hostname;
-        const key = `${company.toLowerCase()}::${result.title.toLowerCase()}`;
-        if (seenCompanyRoles.has(key)) {
-          totalDupes++;
-          continue;
-        }
-        seenUrls.add(result.url);
-        seenCompanyRoles.add(key);
-        newOffers.push({
-          title: result.title,
-          url: result.url,
-          company,
-          location: result.location || '',
-          source: `search:${query.name || query.query}`,
+      } catch (err) {
+        errors.push({
+          company: query.name || query.query,
+          error: `SearXNG: ${err.message}`,
         });
       }
-    } catch (err) {
-      errors.push({ company: query.name || query.query, error: err.message });
     }
   }
 

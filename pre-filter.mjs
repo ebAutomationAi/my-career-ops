@@ -56,7 +56,11 @@ function extractPending(mdContent) {
       const parts = inner.split('|').map(s => s.trim());
       return { url: parts[0] || '', company: parts[1] || '', title: parts[2] || '', raw: line };
     })
-    .filter(item => item.url);
+    .filter(item => {
+      if (!item.url) return false;
+      if (item.url.startsWith('local:')) return true;
+      try { new URL(item.url); return true; } catch { return false; }
+    });
 }
 
 // ── HTML → plain text ─────────────────────────────────────────────────
@@ -70,6 +74,63 @@ function htmlToText(html) {
     .replace(/&nbsp;/g, ' ').replace(/&#\d+;/g, ' ').replace(/&[a-z]+;/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+// ── JD content extraction ─────────────────────────────────────────────
+// Attempts to isolate the job description body before matching.
+// Priority: named JD containers → <main>/<article> → full page fallback.
+
+function extractJdText(html) {
+  // Strip scripts, styles, nav, header, footer, aside upfront
+  const stripped = html
+    .replace(/<(script|style|nav|header|footer|aside|noscript)[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ');
+
+  // Priority 1: named JD containers (covers most ATS: Turijobs, SmartRecruiters,
+  // SuccessFactors, Bizneo, Lever, Greenhouse, Ashby)
+  const jdClassPattern = /(?:job-description|job_description|jd-content|vacancy-description|offer-description|description-content|job-detail|detalle-oferta|descripcion-oferta|offer-body|vacancy-body)/i;
+  const blockRe = /<(div|section|article)[^>]+(?:id|class)="([^"]*)"[^>]*>([\s\S]*?)<\/\1>/gi;
+  let best = '';
+  let m;
+  while ((m = blockRe.exec(stripped)) !== null) {
+    if (jdClassPattern.test(m[2]) && m[3].length > best.length) {
+      best = m[3];
+    }
+  }
+  if (best) {
+    const t = htmlToText(best);
+    if (t.length > 200) return t;
+  }
+
+  // Priority 2: <main> or <article>
+  const semantic = stripped.match(/<main[^>]*>([\s\S]*?)<\/main>/i)
+                 || stripped.match(/<article[^>]*>([\s\S]*?)<\/article>/i);
+  if (semantic) {
+    const t = htmlToText(semantic[1]);
+    if (t.length > 200) return t;
+  }
+
+  // Priority 3: og:description meta (short but reliable)
+  const og = stripped.match(/<meta[^>]+(?:property="og:description"|name="description")[^>]+content="([^"]{80,})"/i)
+           || stripped.match(/<meta[^>]+content="([^"]{80,})"[^>]+(?:property="og:description"|name="description")/i);
+  if (og) return og[1];
+
+  // Fallback: full page text (preserves existing behaviour)
+  return htmlToText(html);
+}
+
+// ── Pattern matching with Unicode word boundaries (fixes substring collisions) ──
+// "IA" no longer matches "experiencia"; "AI" no longer matches "email".
+
+function matchesPattern(text, pattern) {
+  try {
+    const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, 'iu');
+    return re.test(text);
+  } catch {
+    // Fallback for any pattern that produces an invalid regex
+    return text.toLowerCase().includes(pattern.toLowerCase());
+  }
 }
 
 // ── Fetch with timeout ────────────────────────────────────────────────
@@ -87,7 +148,8 @@ async function fetchUrl(url) {
   const timer = setTimeout(() => controller.abort(), 15_000);
   try {
     const res = await fetch(url, { headers: CHROME_HEADERS, signal: controller.signal, redirect: 'follow' });
-    return htmlToText(await res.text());
+    if (!res.ok) return null;
+    return await res.text(); // raw HTML — caller extracts JD content
   } catch {
     return null;
   } finally {
@@ -97,19 +159,24 @@ async function fetchUrl(url) {
 
 // ── Scoring ───────────────────────────────────────────────────────────
 
-function evaluate(text, guardrails) {
-  const lower = text.toLowerCase();
+function evaluate(html, guardrails, title = '') {
+  const jdText = extractJdText(html);
 
+  // hard_blockers: check title (if present) AND jd body — both must be clean
+  const titleLower = title.toLowerCase();
   for (const blocker of (guardrails.hard_blockers || [])) {
-    if (lower.includes(blocker.toLowerCase())) {
+    const titleHit = title && matchesPattern(titleLower, blocker);
+    const jdHit    = matchesPattern(jdText, blocker);
+    if (titleHit || jdHit) {
       return { result: 'discard', reason: `hard_blocker: "${blocker}"` };
     }
   }
 
+  // boosts and soft_blockers always use jd body
   let boostScore = 0;
   const matchedBoosts = [];
   for (const b of (guardrails.boost || [])) {
-    if ((b.patterns || []).some(p => lower.includes(p.toLowerCase()))) {
+    if ((b.patterns || []).some(p => matchesPattern(jdText, p))) {
       boostScore += b.weight ?? 0;
       matchedBoosts.push(b.id);
     }
@@ -118,11 +185,11 @@ function evaluate(text, guardrails) {
   let penalty = 0;
   if (boostScore > 0) {
     for (const s of (guardrails.soft_blockers || [])) {
-      if ((s.patterns || []).some(p => lower.includes(p.toLowerCase()))) {
+      if ((s.patterns || []).some(p => matchesPattern(jdText, p))) {
         penalty += s.weight ?? 0;
       }
     }
-  }  
+  }
   const scoreFinal = boostScore - penalty;
   const minScore = guardrails.min_boost_score ?? 0;
 
@@ -135,19 +202,30 @@ function evaluate(text, guardrails) {
 function updatePipeline(mdContent, discarded) {
   const rawSet = new Set(discarded.map(d => d.raw));
 
-  const remaining = mdContent
-    .split('\n')
-    .filter(l => !rawSet.has(l))
-    .join('\n')
-    .trimEnd();
-
   const moved = discarded
     .map(({ url, company, title, reason }) =>
       `- [x] ${url} | ${company} | ${title} [pre-filter: ${reason}]`
     )
     .join('\n');
 
-  return remaining + '\n' + moved + '\n';
+  // Remove discarded lines first
+  const filtered = mdContent.split('\n').filter(l => !rawSet.has(l)).join('\n');
+
+  // Insert under ## Procesadas section if it exists
+  const sectionIdx = filtered.indexOf('\n## Procesadas');
+  if (sectionIdx !== -1) {
+    const afterHeader = filtered.indexOf('\n', sectionIdx + 1);
+    if (afterHeader !== -1) {
+      return (
+        filtered.slice(0, afterHeader) +
+        '\n' + moved +
+        filtered.slice(afterHeader)
+      ).trimEnd() + '\n';
+    }
+  }
+
+  // ## Procesadas not found — create section at end
+  return filtered.trimEnd() + '\n\n## Procesadas\n' + moved + '\n';
 }
 
 // ── Sleep ─────────────────────────────────────────────────────────────
@@ -190,7 +268,7 @@ async function main() {
       process.stdout.write(`  → error_fetch\n\n`);
       results.push({ ...item, result: 'error_fetch', reason: 'error_fetch' });
     } else {
-      const ev = evaluate(text, guardrails);
+      const ev = evaluate(text, guardrails, item.title);
       if (ev.result === 'discard') {
         process.stdout.write(`  → DESCARTADA (${ev.reason})\n\n`);
       } else {
