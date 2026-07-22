@@ -93,3 +93,4 @@ profiles/*/data/follow-ups.md
 profiles/*/modes/_profile.md
 *.docx
 verify-recepcionista-tmp.mjs
+graphify-out/
